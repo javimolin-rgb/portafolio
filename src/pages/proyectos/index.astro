@@ -1,0 +1,85 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects } from '../../data/projects';
+
+/* Filtros por tipo de trabajo, derivados del tipo de cada proyecto. */
+const groups: Record<string, string[]> = {
+  'Evento en tienda': ['eventos'],
+  'Evento deportivo y campaña': ['eventos', 'campanas'],
+  'Inauguración y eventos': ['eventos', 'lanzamientos'],
+  'Activaciones con marcas': ['eventos'],
+  'Campaña de temporada': ['campanas'],
+  'Sistema de piezas': ['campanas'],
+  'Piezas de temporada': ['campanas'],
+  'Video para pantallas': ['campanas'],
+  'Lanzamiento': ['lanzamientos'],
+  'Propuesta de identidad': ['identidad'],
+};
+const filters = [
+  { key: 'todos', label: 'Todos' },
+  { key: 'eventos', label: 'Eventos' },
+  { key: 'campanas', label: 'Campañas' },
+  { key: 'lanzamientos', label: 'Lanzamientos' },
+  { key: 'identidad', label: 'Identidad' },
+];
+---
+<Base
+  title="Proyectos — Javi Molin"
+  description="Diez proyectos de 2025 de Javi Molin: eventos, campañas, lanzamientos e identidad para Ripley y marcas invitadas."
+  current="proyectos"
+>
+  <header class="page-head">
+    <h1 class="page-head__title display">Proyectos</h1>
+    <p class="page-head__lead lead">Diez proyectos de 2025. Elige un tipo de trabajo o abre cualquier proyecto para ver el proceso, los formatos y las decisiones.</p>
+  </header>
+
+  <section class="sec work">
+    <div class="filters" role="group" aria-label="Filtrar proyectos" data-filters hidden>
+      {filters.map((f, i) => (
+        <button type="button" class="filter" data-filter={f.key} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
+      ))}
+    </div>
+    <p class="sr-only" aria-live="polite" data-count></p>
+    <ul class="cards" data-cards>
+      {projects.map((p, i) => (
+        <li data-groups={(groups[p.category] ?? []).join(' ')}><ProjectCard project={p} eager={i < 2} /></li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .work { padding-top: var(--s-7); }
+  .filters { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-6); }
+  .filter {
+    min-height: 40px; padding: 0 1rem; border-radius: 6px; border: 1px solid #cfcfca;
+    font-size: 0.875rem; color: var(--fg-2); transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+  }
+  .filter:hover { border-color: var(--ink); color: var(--fg); }
+  .filter[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--gap); }
+  .cards li[hidden] { display: none; }
+  @media (max-width: 799px) { .cards { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-filters]');
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-cards] > li'));
+  const count = document.querySelector<HTMLElement>('[data-count]');
+  if (bar) {
+    bar.hidden = false;
+    const btns = Array.from(bar.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+    btns.forEach((b) => b.addEventListener('click', () => {
+      const key = b.dataset.filter!;
+      btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      let n = 0;
+      items.forEach((li) => {
+        const show = key === 'todos' || li.dataset.groups!.split(' ').includes(key);
+        li.hidden = !show;
+        if (show) n++;
+      });
+      if (count) count.textContent = `${n} proyectos`;
+    }));
+  }
+</script>
