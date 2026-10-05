@@ -1,1 +1,46 @@
-# portafolio
+# Javi Molin, portafolio
+
+Portafolio de María Javiera Molin, Diseñadora Integral UC. Sitio estático hecho con [Astro](https://astro.build).
+
+- **Dirección de arte:** [`DESIGN.md`](DESIGN.md). Léelo antes de cambiar algo visual.
+- **Auditoría y direcciones exploradas:** [`docs/`](docs/).
+
+## Trabajar en local
+
+```bash
+npm install
+npm run dev      # http://localhost:4321/portafolio/
+npm run build    # genera dist/
+npm run preview  # revisa el build
+```
+
+Requiere Node 20 o superior.
+
+## Dónde está cada cosa
+
+```
+src/data/projects.ts     Proyectos, textos, bloques de cada caso, marco de formatos y banda "a escala"
+src/assets/work/<slug>/  Imágenes fuente de cada proyecto (se optimizan solas a AVIF/WebP)
+public/video/            Loops de video (.mp4, sin sonido)
+public/cv/               CV en PDF
+src/components/          Marco de formatos, índice, bloques, figura
+src/pages/               Inicio, casos (trabajo/[slug]), Sobre mí, 404
+src/styles/global.css    Tokens de color, tipografía y superficies
+```
+
+## Agregar un proyecto
+
+1. Crea `src/assets/work/mi-proyecto/` y pon ahí las imágenes (JPG o PNG, lado mayor hasta 2400 px).
+2. En `src/data/projects.ts`, copia un proyecto completo y cambia `slug`, textos y piezas (`field`, `ink` y `format` se conservan en los datos, pero el diseño actual no los usa).
+3. Arma el caso con bloques (`notes`, `row`, `scale`, `sequence`, `anatomy`, `pair`, `grid`, `stack`, `statement`, `bleed`). Ver DESIGN.md §8.
+4. Videos: `public/video/nombre.mp4` y una imagen de póster con `video: 'nombre'` en la pieza.
+
+## Publicar
+
+El workflow `.github/workflows/deploy.yml` publica en GitHub Pages en cada push a `main`. En el repositorio: *Settings → Pages → Source: GitHub Actions*.
+
+Queda en `https://javimolin-rgb.github.io/portafolio/`. Para un dominio propio, cambia `site` y `base` en `astro.config.mjs` y la URL de `public/robots.txt`.
+
+## Fuentes
+
+Instrument Serif y Mona Sans, ambas con licencia SIL Open Font License (ver `src/fonts/`).
