@@ -1,0 +1,187 @@
+---
+/* Estructura de dos columnas: barra lateral fija con perfil y navegación, contenido a la derecha.
+   En pantallas chicas la barra se vuelve una cabecera con menú desplegable. */
+import '../styles/global.css';
+import { Picture } from 'astro:assets';
+import Icon from '../components/Icon.astro';
+import retrato from '../assets/perfil/foto-retrato.jpg';
+import serifLatin from '../fonts/instrument-serif-latin.woff2?url';
+import monaLatin from '../fonts/mona-sans-latin.woff2?url';
+import { url } from '../lib/assets';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  current?: 'inicio' | 'proyectos' | 'experiencia' | 'contacto';
+}
+const { title, description, ogImage, current } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = ogImage ? new URL(ogImage, Astro.site).href : new URL(url('og.jpg'), Astro.site).href;
+const nav = [
+  { key: 'inicio', label: 'Inicio', href: url(''), icon: 'home' },
+  { key: 'proyectos', label: 'Proyectos', href: url('proyectos/'), icon: 'grid' },
+  { key: 'experiencia', label: 'Experiencia', href: url('experiencia/'), icon: 'file' },
+  { key: 'contacto', label: 'Contacto', href: url('contacto/'), icon: 'mail' },
+] as const;
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'María Javiera Molin',
+  alternateName: ['Javi Molin', 'Javiera Molin'],
+  jobTitle: 'Diseñadora Integral',
+  alumniOf: 'Pontificia Universidad Católica de Chile',
+  address: { '@type': 'PostalAddress', addressLocality: 'Santiago', addressCountry: 'CL' },
+  email: 'mailto:javimolin@gmail.com',
+  url: new URL(url(''), Astro.site).href,
+  sameAs: ['https://www.linkedin.com/in/javimolin/'],
+};
+---
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={url('sitemap-index.xml')} />
+    <link rel="preload" href={serifLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monaLatin} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#1c1c1a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="Javi Molin" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="author" content="María Javiera Molin" />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+  </head>
+  <body>
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <div class="shell">
+      <header class="side" data-side>
+        <div class="side__top">
+          <a class="side__name" href={url('')}>Javi Molin</a>
+          <button class="side__toggle" type="button" aria-expanded="false" aria-controls="side-panel" data-toggle>
+            <span class="side__toggle-open"><Icon name="menu" /></span>
+            <span class="side__toggle-close"><Icon name="close" /></span>
+            <span class="sr-only">Menú</span>
+          </button>
+        </div>
+        <div class="side__panel" id="side-panel">
+          <Picture
+            class="side__photo"
+            src={retrato}
+            alt="Retrato de Javi Molin"
+            widths={[160, 320]}
+            sizes="140px"
+            formats={['avif']}
+            fallbackFormat="webp"
+          />
+          <p class="side__bio">Diseñadora Integral UC. Branding, campañas y piezas que funcionan en todos los formatos.</p>
+          <nav class="side__nav" aria-label="Principal">
+            <ul>
+              {nav.map((n) => (
+                <li>
+                  <a href={n.href} aria-current={current === n.key ? 'page' : undefined}>
+                    <Icon name={n.icon} />{n.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div class="side__actions">
+            <a class="btn btn--light" href="mailto:javimolin@gmail.com"><Icon name="mail" size={18} />Escribir un correo</a>
+            <a class="btn btn--line" href={url('cv/CV-Javi-Molin.pdf')} download><Icon name="download" size={18} />Descargar CV</a>
+          </div>
+          <a class="side__in" href="https://www.linkedin.com/in/javimolin/" rel="me"><Icon name="linkedin" size={18} />LinkedIn</a>
+        </div>
+      </header>
+
+      <div class="page">
+        <main id="contenido">
+          <slot />
+        </main>
+        <footer class="foot">
+          <p>María Javiera Molin, Diseñadora Integral UC. Santiago, Chile.</p>
+          <p>Las fotos de modelos y producto son material de las marcas; el diseño, la composición y los originales son míos, salvo donde se indica otra autoría.</p>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      const side = document.querySelector<HTMLElement>('[data-side]');
+      const btn = document.querySelector<HTMLButtonElement>('[data-toggle]');
+      if (side && btn) {
+        btn.addEventListener('click', () => {
+          const open = side.classList.toggle('is-open');
+          btn.setAttribute('aria-expanded', String(open));
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && side.classList.contains('is-open')) {
+            side.classList.remove('is-open');
+            btn.setAttribute('aria-expanded', 'false');
+            btn.focus();
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  .shell { display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr); min-height: 100vh; }
+
+  .side {
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    background: var(--side-bg); color: var(--side-fg);
+    padding: var(--s-6) var(--s-5);
+    display: flex; flex-direction: column;
+  }
+  .side :focus-visible { outline-color: var(--side-fg); }
+  .side__top { display: flex; justify-content: space-between; align-items: center; }
+  .side__name { font-family: var(--display); font-size: 1.75rem; line-height: 1; text-decoration: none; }
+  .side__toggle { display: none; width: 44px; height: 44px; place-items: center; color: var(--side-fg); }
+  .side__toggle-close { display: none; }
+
+  .side__panel { display: flex; flex-direction: column; flex: 1; }
+  :global(.side__photo) { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-top: var(--s-6); }
+  .side__bio { margin-top: var(--s-5); font-size: 0.875rem; line-height: 1.55; color: var(--side-fg-2); max-width: 26ch; }
+
+  .side__nav { margin-top: var(--s-6); padding-top: var(--s-4); border-top: 1px solid var(--side-rule); }
+  .side__nav a {
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 44px; padding-inline: var(--s-3); margin-inline: calc(var(--s-3) * -1);
+    border-radius: 6px; text-decoration: none; color: var(--side-fg-2);
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+  .side__nav a:hover { color: var(--side-fg); background: rgb(255 255 255 / 0.06); }
+  .side__nav a[aria-current='page'] { color: var(--side-fg); background: rgb(255 255 255 / 0.1); }
+
+  .side__actions { display: grid; gap: var(--s-2); margin-top: auto; padding-top: var(--s-6); }
+  .side__in { display: inline-flex; align-items: center; gap: var(--s-2); margin-top: var(--s-4); font-size: 0.875rem; color: var(--side-fg-2); text-decoration: none; }
+  .side__in:hover { color: var(--side-fg); }
+
+  .page { min-width: 0; display: flex; flex-direction: column; }
+  main { flex: 1; }
+  .foot { margin-top: var(--section); padding: var(--s-6) var(--margin); border-top: 1px solid var(--rule); font-size: var(--t-small); color: var(--fg-2); display: grid; gap: var(--s-1); }
+  .foot p { max-width: 80ch; }
+
+  @media (max-width: 999px) {
+    .shell { grid-template-columns: 1fr; }
+    .side { position: sticky; top: 0; z-index: 30; height: auto; max-height: 100vh; padding: var(--s-3) var(--margin); }
+    .side__toggle { display: grid; }
+    .side__panel { display: none; padding-bottom: var(--s-6); }
+    .side.is-open .side__panel { display: flex; }
+    .side.is-open .side__toggle-open { display: none; }
+    .side.is-open .side__toggle-close { display: block; }
+    .side__name { font-size: 1.5rem; }
+    :global(.side__photo) { width: 96px; height: 96px; margin-top: var(--s-5); }
+    .side__actions { margin-top: var(--s-5); }
+  }
+</style>
