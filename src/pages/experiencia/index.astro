@@ -1,0 +1,93 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import foto from '../../assets/perfil/foto-sobre-mi.jpg';
+import { experiencia, formacion, hace, herramientas } from '../../data/perfil';
+import { url } from '../../lib/assets';
+---
+<Base
+  title="Experiencia — Javi Molin"
+  description="Experiencia, formación y herramientas de María Javiera Molin, Diseñadora Integral UC: Ripley, Agencia Lupa BTL, Fundación Banco de Ropa y trabajo freelance."
+  current="experiencia"
+>
+  <header class="page-head">
+    <h1 class="page-head__title display">Experiencia</h1>
+    <div class="bio">
+      <div class="prose">
+        <p class="lead">Diseñadora Integral de la Pontificia Universidad Católica de Chile, con foco en diseño gráfico y branding, y un diplomado en Branding y Valor de Marca.</p>
+        <p>En 2025 trabajé como diseñadora de marketing en Ripley. Hice campañas comerciales y eventos para Chile y Perú: piezas para redes, e-commerce, pantallas de Metro, pendones, lienzos de cinco metros, módulos de tienda y merchandising, junto a los equipos de Marketing, Contenidos y Comercial, y con agencias y productoras.</p>
+        <p>Me gusta la parte del proyecto que no se ve en la pieza final: medir, adaptar a veinte formatos, revisar el legal y cerrar originales para que la imprenta no tenga dudas.</p>
+        <div class="actions bio__actions">
+          <a class="btn" href={url('cv/CV-Javi-Molin.pdf')} download><Icon name="download" size={18} />Descargar CV</a>
+          <a class="btn btn--ghost" href="mailto:javimolin@gmail.com"><Icon name="mail" size={18} />Escribir un correo</a>
+        </div>
+      </div>
+      <Picture class="bio__photo" src={foto} alt="Javi Molin" widths={[480, 800]} sizes="(min-width: 1000px) 28vw, 92vw" formats={['avif']} fallbackFormat="webp" />
+    </div>
+  </header>
+
+  <section class="sec" aria-labelledby="trabajo">
+    <h2 id="trabajo" class="h2 sec__title">Trabajo</h2>
+    <ol class="cv">
+      {experiencia.map((e) => (
+        <li>
+          <p class="cv__when">{e.periodo}</p>
+          <div>
+            <h3 class="h3">{e.cargo}</h3>
+            <p class="cv__where">{e.lugar}</p>
+            <p class="cv__what">{e.detalle}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="sec" aria-labelledby="formacion">
+    <h2 id="formacion" class="h2 sec__title">Formación</h2>
+    <ol class="cv">
+      {formacion.map((f) => (
+        <li>
+          <p class="cv__when">{f.periodo}</p>
+          <div>
+            <h3 class="h3">{f.titulo}</h3>
+            <p class="cv__where">{f.lugar}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="sec two" aria-label="Áreas y herramientas">
+    <div>
+      <h2 class="h2 sec__title">Áreas</h2>
+      <ul class="tags">{hace.map((h) => <li>{h}</li>)}</ul>
+    </div>
+    <div>
+      <h2 class="h2 sec__title">Herramientas</h2>
+      <ul class="tags">{herramientas.map((h) => <li>{h}</li>)}</ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .bio { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s-7) clamp(2rem, 5vw, 5rem); margin-top: var(--s-6); align-items: start; }
+  .bio .prose { max-width: 60ch; color: var(--fg-2); }
+  .bio .lead { color: var(--fg); }
+  .bio__actions { margin-top: var(--s-6); }
+  :global(.bio__photo) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 40%; }
+  .sec__title { margin-bottom: var(--s-5); }
+  .cv { border-top: 1px solid var(--rule); }
+  .cv li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: var(--gap); padding-block: var(--s-5); border-bottom: 1px solid var(--rule); }
+  .cv__when { color: var(--fg-2); }
+  .cv__where { margin-top: var(--s-1); }
+  .cv__what { margin-top: var(--s-2); max-width: 60ch; color: var(--fg-2); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-7) var(--gap); }
+  .tags { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .tags li { padding: 0.375rem 0.75rem; border: 1px solid var(--rule); border-radius: 6px; font-size: 0.875rem; }
+  @media (max-width: 899px) {
+    .bio, .two { grid-template-columns: 1fr; }
+    :global(.bio__photo) { aspect-ratio: 3 / 2; }
+    .cv li { grid-template-columns: 1fr; gap: var(--s-1); }
+  }
+</style>
