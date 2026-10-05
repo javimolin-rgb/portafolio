@@ -1,0 +1,46 @@
+---
+/* Tarjeta de proyecto: portada sobre placa neutra, título, tipo y cliente. Toda la tarjeta es el enlace. */
+import { Picture } from 'astro:assets';
+import type { Project } from '../data/projects';
+import { asset, url } from '../lib/assets';
+
+interface Props { project: Project; eager?: boolean; sizes?: string }
+const { project: p, eager = false, sizes = '(min-width: 1000px) 34vw, 92vw' } = Astro.props;
+const img = asset(p.cover.ref);
+const photo = Boolean(p.cover.focus) || /foto/i.test(p.cover.format ?? '');
+---
+<a class="card" href={url(`trabajo/${p.slug}/`)}>
+  <span class:list={['card__plate', { 'card__plate--photo': photo }]}>
+    <Picture
+      src={img}
+      alt=""
+      widths={[480, 800, 1200].filter((w) => w <= img.width)}
+      sizes={sizes}
+      formats={['avif']}
+      fallbackFormat="webp"
+      loading={eager ? 'eager' : 'lazy'}
+      style={photo ? `object-position:${p.cover.focus ?? '50% 50%'}` : undefined}
+    />
+  </span>
+  <span class="card__body">
+    <span class="card__kind">{p.category}</span>
+    <span class="card__title" style={`view-transition-name: t-${p.slug}`}>{p.title}</span>
+    <span class="card__meta">{p.client}, {p.year}</span>
+  </span>
+</a>
+
+<style>
+  .card { display: flex; flex-direction: column; height: 100%; text-decoration: none; }
+  .card__plate { display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--plate); padding: clamp(1rem, 3vw, 2.5rem); }
+  .card__plate--photo { padding: 0; }
+  .card__plate :global(img) { width: 100%; height: 100%; object-fit: contain; transition: transform 600ms var(--ease-out); }
+  .card__plate--photo :global(img) { object-fit: cover; }
+  .card__body { display: grid; gap: 0.125rem; padding-top: var(--s-4); }
+  .card__kind { font-size: var(--t-small); color: var(--fg-2); }
+  .card__title { font-family: var(--display); font-size: clamp(1.5rem, 1.25rem + 0.7vw, 1.875rem); line-height: 1.1; }
+  .card__meta { font-size: var(--t-small); color: var(--fg-2); }
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover .card__plate :global(img) { transform: scale(1.02); }
+    .card:hover .card__title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  }
+</style>
