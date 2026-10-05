@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { url } from '../../lib/assets';
+
+const vias = [
+  { icon: 'mail', label: 'Correo', value: 'javimolin@gmail.com', href: 'mailto:javimolin@gmail.com', action: 'Escribir un correo' },
+  { icon: 'linkedin', label: 'LinkedIn', value: 'linkedin.com/in/javimolin', href: 'https://www.linkedin.com/in/javimolin/', action: 'Abrir LinkedIn' },
+  { icon: 'download', label: 'Currículum', value: 'CV en PDF', href: url('cv/CV-Javi-Molin.pdf'), action: 'Descargar CV', download: true },
+] as const;
+---
+<Base
+  title="Contacto — Javi Molin"
+  description="Contacto de María Javiera Molin, Diseñadora Integral UC: correo, LinkedIn, teléfono y CV."
+  current="contacto"
+>
+  <header class="page-head">
+    <h1 class="page-head__title display">Contacto</h1>
+    <p class="page-head__lead lead">Busco un rol in-house en diseño y tomo proyectos freelance desde Santiago, Chile. La forma más rápida de llegar a mí es el correo.</p>
+  </header>
+
+  <section class="sec">
+    <ul class="ways">
+      {vias.map((v) => (
+        <li class="way">
+          <span class="way__icon"><Icon name={v.icon} size={22} /></span>
+          <p class="way__label">{v.label}</p>
+          <p class="way__value">{v.value}</p>
+          <a class="btn btn--ghost" href={v.href} download={'download' in v ? true : undefined} rel={v.icon === 'linkedin' ? 'me' : undefined}>{v.action}</a>
+        </li>
+      ))}
+    </ul>
+    <p class="phone">También por teléfono: <a href="tel:+56966303974">+56 9 6630 3974</a></p>
+  </section>
+</Base>
+
+<style>
+  .ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
+  .way { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); padding: var(--s-6); background: var(--plate); }
+  .way__icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--paper); margin-bottom: var(--s-2); }
+  .way__label { font-size: var(--t-small); color: var(--fg-2); }
+  .way__value { font-family: var(--display); font-size: 1.5rem; line-height: 1.15; overflow-wrap: anywhere; margin-bottom: var(--s-3); }
+  .way .btn { margin-top: auto; }
+  .phone { margin-top: var(--s-6); color: var(--fg-2); }
+  @media (max-width: 899px) { .ways { grid-template-columns: 1fr; } }
+</style>
