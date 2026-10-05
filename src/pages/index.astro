@@ -1,0 +1,143 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import foto from '../assets/perfil/foto-sobre-mi.jpg';
+import { projects } from '../data/projects';
+import { experiencia } from '../data/perfil';
+import { url } from '../lib/assets';
+
+const destacados = ['dia-del-nino', 'campeones-sin-limites', 'toys-r-us', 'ventas-privadas'].map((s) => projects.find((p) => p.slug === s)!);
+
+const servicios = [
+  { icon: 'pen', title: 'Dirección de arte', text: 'Concepto, tipografía y tratamiento de fotos cuando una campaña no tiene key visual, como en New Romantic.' },
+  { icon: 'layers', title: 'Campañas multiformato', text: 'Una misma idea adaptada a redes, pantallas, WhatsApp, mailing y tienda, como en Ventas Privadas y Days.' },
+  { icon: 'store', title: 'Eventos y gran formato', text: 'Arcos, lienzos de cinco metros, banderas y módulos para tiendas y estadios, como en Día del Niño y Campeones Sin Límites.' },
+  { icon: 'type', title: 'Branding e identidad', text: 'Logo, paleta, tipografía y elementos gráficos, como en la propuesta de identidad para Gamer Week.' },
+  { icon: 'screen', title: 'Motion para pantallas', text: 'Videos y stories animadas para las pantallas de Metro y para redes, como en Me fascinan las sandalias.' },
+  { icon: 'print', title: 'Originales para producción', text: 'Medidas, legales y archivos cerrados para que la imprenta y los proveedores no tengan dudas.' },
+] as const;
+---
+<Base
+  title="Javi Molin — Diseñadora Integral UC"
+  description="Portafolio de María Javiera Molin, Diseñadora Integral UC. Branding, dirección de arte, campañas y eventos que funcionan en todos los formatos."
+  current="inicio"
+>
+  <section class="intro">
+    <div class="intro__text">
+      <h1 class="intro__name display">María Javiera Molin</h1>
+      <p class="intro__role">Diseñadora Integral UC, branding y campañas</p>
+      <p class="intro__lead lead">Diseño campañas, eventos y piezas de tienda para marcas en Chile y Perú, pensadas para funcionar igual en un pendón de dos metros que en un mensaje de WhatsApp. Busco un rol in-house y tomo proyectos freelance.</p>
+      <div class="actions">
+        <a class="btn" href={url('proyectos/')}><Icon name="grid" size={18} />Ver proyectos</a>
+        <a class="btn btn--ghost" href={url('cv/CV-Javi-Molin.pdf')} download><Icon name="download" size={18} />Descargar CV</a>
+      </div>
+    </div>
+    <Picture
+      class="intro__photo"
+      src={foto}
+      alt="Javi Molin, foto en blanco y negro"
+      widths={[480, 800, 1200]}
+      sizes="(min-width: 1000px) 34vw, 92vw"
+      formats={['avif']}
+      fallbackFormat="webp"
+      loading="eager"
+    />
+  </section>
+
+  <section class="sec" aria-labelledby="que-hago">
+    <div class="sec__head">
+      <h2 id="que-hago" class="h2">Qué hago</h2>
+      <p class="sec__intro">Cada área con un proyecto del portafolio donde se puede ver.</p>
+    </div>
+    <ul class="services">
+      {servicios.map((s) => (
+        <li class="service">
+          <span class="service__icon"><Icon name={s.icon} size={22} /></span>
+          <h3 class="h3">{s.title}</h3>
+          <p>{s.text}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="sec" aria-labelledby="destacados">
+    <div class="sec__head">
+      <h2 id="destacados" class="h2">Proyectos destacados</h2>
+      <a class="btn btn--ghost" href={url('proyectos/')}>Ver los diez proyectos</a>
+    </div>
+    <ul class="cards">
+      {destacados.map((p) => <li><ProjectCard project={p} /></li>)}
+    </ul>
+  </section>
+
+  <section class="sec" aria-labelledby="exp">
+    <div class="sec__head">
+      <h2 id="exp" class="h2">Experiencia</h2>
+      <a class="btn btn--ghost" href={url('experiencia/')}>Ver experiencia y formación</a>
+    </div>
+    <ol class="timeline">
+      {experiencia.map((e) => (
+        <li>
+          <p class="timeline__when">{e.periodo}</p>
+          <div>
+            <h3 class="h3">{e.cargo}</h3>
+            <p class="timeline__where">{e.lugar}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="sec" aria-labelledby="cta">
+    <div class="cta">
+      <div>
+        <h2 id="cta" class="h2">¿Conversamos?</h2>
+        <p class="cta__text">Escríbeme por correo o LinkedIn. Respondo desde Santiago.</p>
+      </div>
+      <div class="actions">
+        <a class="btn" href="mailto:javimolin@gmail.com"><Icon name="mail" size={18} />Escribir un correo</a>
+        <a class="btn btn--ghost" href={url('contacto/')}>Ver contacto</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7) clamp(2rem, 5vw, 5rem);
+    align-items: center; padding: clamp(2.5rem, 8vh, 6rem) var(--margin) 0;
+  }
+  .intro__name { font-size: clamp(2.75rem, 1.2rem + 4.2vw, 5.25rem); line-height: 0.98; letter-spacing: -0.02em; max-width: 12ch; }
+  .intro__role { margin-top: var(--s-4); font-weight: 500; }
+  .intro__lead { margin-top: var(--s-4); color: var(--fg-2); }
+  .intro .actions { margin-top: var(--s-6); }
+  :global(.intro__photo) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 40%; }
+
+  .services { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6) var(--gap); }
+  .service { padding-top: var(--s-5); border-top: 1px solid var(--rule); }
+  .service__icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--plate); }
+  .service .h3 { margin-top: var(--s-4); }
+  .service p { margin-top: var(--s-2); color: var(--fg-2); font-size: 0.9375rem; max-width: 36ch; }
+
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--gap); }
+
+  .timeline { border-top: 1px solid var(--rule); }
+  .timeline li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: var(--gap); padding-block: var(--s-4); border-bottom: 1px solid var(--rule); }
+  .timeline__when { color: var(--fg-2); }
+  .timeline__where { color: var(--fg-2); }
+
+  .cta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--s-5); padding: clamp(2rem, 5vw, 3.5rem); background: var(--plate); }
+  .cta__text { margin-top: var(--s-2); color: var(--fg-2); }
+
+  @media (max-width: 1199px) {
+    .services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 799px) {
+    .intro { grid-template-columns: 1fr; }
+    :global(.intro__photo) { aspect-ratio: 3 / 2; }
+    .services, .cards { grid-template-columns: 1fr; }
+    .timeline li { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>
