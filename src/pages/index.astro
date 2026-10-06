@@ -8,13 +8,13 @@ import { projects } from '../data/projects';
 import { experiencia } from '../data/perfil';
 import { url } from '../lib/assets';
 
-const destacados = ['dia-del-nino', 'campeones-sin-limites', 'toys-r-us', 'ventas-privadas'].map((s) => projects.find((p) => p.slug === s)!);
+const destacados = ['muralia', 'neorigen', 'dia-del-nino', 'campeones-sin-limites'].map((s) => projects.find((p) => p.slug === s)!);
 
 const servicios = [
   { icon: 'pen', title: 'Dirección de arte', text: 'Concepto, tipografía y tratamiento de fotos cuando una campaña no tiene key visual, como en New Romantic.' },
   { icon: 'layers', title: 'Campañas multiformato', text: 'Una misma idea adaptada a redes, pantallas, WhatsApp, mailing y tienda, como en Ventas Privadas y Days.' },
   { icon: 'store', title: 'Eventos y gran formato', text: 'Arcos, lienzos de cinco metros, banderas y módulos para tiendas y estadios, como en Día del Niño y Campeones Sin Límites.' },
-  { icon: 'type', title: 'Branding e identidad', text: 'Logo, paleta, tipografía y elementos gráficos, como en la propuesta de identidad para Gamer Week.' },
+  { icon: 'type', title: 'Branding e identidad', text: 'Paleta, tipografía, manual de marca y redes, como en Muralia y Neorigen, mis clientes freelance actuales.' },
   { icon: 'screen', title: 'Motion para pantallas', text: 'Videos y stories animadas para las pantallas de Metro y para redes, como en Me fascinan las sandalias.' },
   { icon: 'print', title: 'Originales para producción', text: 'Medidas, legales y archivos cerrados para que la imprenta y los proveedores no tengan dudas.' },
 ] as const;
@@ -65,7 +65,7 @@ const servicios = [
   <section class="sec" aria-labelledby="destacados">
     <div class="sec__head">
       <h2 id="destacados" class="h2">Proyectos destacados</h2>
-      <a class="btn btn--ghost" href={url('proyectos/')}>Ver los diez proyectos</a>
+      <a class="btn btn--ghost" href={url('proyectos/')}>Ver los doce proyectos</a>
     </div>
     <ul class="cards">
       {destacados.map((p) => <li><ProjectCard project={p} /></li>)}

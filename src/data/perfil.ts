@@ -2,7 +2,7 @@
 
 export const experiencia = [
   { periodo: '2025', cargo: 'Diseñadora de Marketing', lugar: 'Ripley', detalle: 'Campañas digitales y presenciales en Chile y Perú: Ripley Beauty, Día del Niño, Navidad, CyberDay, Días R, eventos y activaciones.' },
-  { periodo: '2022 a hoy', cargo: 'Diseñadora independiente', lugar: 'Freelance', detalle: 'Branding, redes sociales y material gráfico para clientes de distintas industrias.' },
+  { periodo: '2022 a hoy', cargo: 'Diseñadora independiente', lugar: 'Freelance', detalle: 'Branding, redes sociales y material gráfico para clientes de distintas industrias. Hoy: identidad, manual de marca, redes y sitio web para Muralia y Neorigen.' },
   { periodo: '2022 a 2023', cargo: 'Diseñadora principal', lugar: 'Agencia Lupa BTL', detalle: 'Propuestas de diseño para clientes de capital humano, espacios y vestuario para eventos corporativos, y redes sociales de la agencia.' },
   { periodo: '2022 a 2023', cargo: 'Diseñadora complementaria', lugar: 'Fundación Banco de Ropa', detalle: 'Propuestas para un uso más eficiente de los recursos de la fundación.' },
 ];
