@@ -5,8 +5,8 @@ import '../styles/global.css';
 import { Picture } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import retrato from '../assets/perfil/foto-retrato.jpg';
-import serifLatin from '../fonts/instrument-serif-latin.woff2?url';
-import monaLatin from '../fonts/mona-sans-latin.woff2?url';
+import serifLatin from '../fonts/newsreader-latin.woff2?url';
+import monaLatin from '../fonts/inter-tight-latin.woff2?url';
 import { url } from '../lib/assets';
 
 interface Props {
@@ -145,7 +145,7 @@ const person = {
   }
   .side :focus-visible { outline-color: var(--side-fg); }
   .side__top { display: flex; justify-content: space-between; align-items: center; }
-  .side__name { font-family: var(--display); font-size: 1.75rem; line-height: 1; text-decoration: none; }
+  .side__name { font-family: var(--display); font-weight: var(--display-w); letter-spacing: -0.01em; font-size: 1.75rem; line-height: 1; text-decoration: none; }
   .side__toggle { display: none; width: 44px; height: 44px; place-items: center; color: var(--side-fg); }
   .side__toggle-close { display: none; }
 

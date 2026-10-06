@@ -37,7 +37,7 @@ const photo = Boolean(p.cover.focus) || /foto/i.test(p.cover.format ?? '');
   .card__plate--photo :global(img) { object-fit: cover; }
   .card__body { display: grid; gap: 0.125rem; padding-top: var(--s-4); }
   .card__kind { font-size: var(--t-small); color: var(--fg-2); }
-  .card__title { font-family: var(--display); font-size: clamp(1.5rem, 1.25rem + 0.7vw, 1.875rem); line-height: 1.1; }
+  .card__title { font-family: var(--display); font-weight: var(--display-w); letter-spacing: -0.01em; font-size: clamp(1.5rem, 1.25rem + 0.7vw, 1.875rem); line-height: 1.1; }
   .card__meta { font-size: var(--t-small); color: var(--fg-2); }
   @media (hover: hover) and (pointer: fine) {
     .card:hover .card__plate :global(img) { transform: scale(1.02); }
