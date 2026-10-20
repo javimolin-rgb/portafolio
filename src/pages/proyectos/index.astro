@@ -44,8 +44,8 @@ const filters = [
     </div>
     <p class="sr-only" aria-live="polite" data-count></p>
     <ul class="cards" data-cards>
-      {projects.map((p, i) => (
-        <li data-groups={(groups[p.category] ?? []).join(' ')}><ProjectCard project={p} eager={i < 2} /></li>
+      {projects.map((p) => (
+        <li data-groups={(groups[p.category] ?? []).join(' ')}><ProjectCard project={p} /></li>
       ))}
     </ul>
   </section>

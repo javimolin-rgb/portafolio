@@ -1,0 +1,212 @@
+---
+/* Lámina de portada de un proyecto para el índice (DESIGN.md §7).
+   SVG en línea sobre un lienzo 1200 × 900, para que herede las tipografías
+   y los tokens del sitio y no cueste una petición más.
+
+   Una sola estructura en las doce: el motivo vive en la banda de arriba y
+   abajo hay una cartela de campo limpio donde se compone el texto. Lo que
+   cambia de un proyecto a otro son los colores, el motivo y la voz del
+   título, sacados de las normas gráficas de ese proyecto. */
+import { portadas } from '../data/portadas';
+
+interface Props { slug: string; rotulo: string }
+const { slug, rotulo } = Astro.props;
+const c = portadas[slug];
+if (!c) throw new Error(`Portada no definida para el proyecto: ${slug}`);
+
+const alt = c.alt ?? c.ink;
+/* Ids únicos: en el índice conviven las doce láminas en un mismo documento. */
+const uid = `pz-${slug}`;
+
+/** Borde superior de la cartela. El motivo se dibuja arriba de esta línea. */
+const CARTELA = 596;
+
+const n = c.lineas.length;
+const tam = n > 1 ? 78 : 96;
+const alto = 86;
+const base = 856 - (n - 1) * alto;
+const fam = c.voz === 'serif' ? 'var(--display)' : 'var(--text)';
+const peso = c.voz === 'serif' ? 500 : 600;
+const caja = c.caja === 'alta' ? 'uppercase' : c.caja === 'baja' ? 'lowercase' : 'none';
+---
+<svg class="pz" viewBox="0 0 1200 900" width="1200" height="900" aria-hidden="true" focusable="false">
+  <rect width="1200" height="900" fill={c.field} />
+
+  {c.motivo === 'aparejo' && (
+    /* Muralia: el aparejo de ladrillos y el marco cuadrado del isotipo. */
+    <>
+      <defs>
+        <pattern id={uid} width="300" height="120" patternUnits="userSpaceOnUse">
+          <path d="M0 0H300M0 60H300M0 120H300M0 0V60M150 60V120" fill="none" stroke={c.ink} stroke-width="5" opacity="0.38" />
+        </pattern>
+      </defs>
+      <rect width="1200" height={CARTELA} fill={`url(#${uid})`} />
+      <rect x="856" y="120" width="236" height="236" fill="none" stroke={c.ink} stroke-width="14" />
+      <rect x="910" y="174" width="128" height="128" fill={c.ink} opacity="0.9" />
+    </>
+  )}
+
+  {c.motivo === 'casa' && (
+    /* Neorigen: la casa de dos aguas sobre la línea de terreno. */
+    <>
+      <g fill="none" stroke={c.ink} stroke-width="9">
+        <path d="M676 400 L856 232 L1036 400" />
+        <path d="M712 400 V528 H1000 V400" />
+        <path d="M856 232 V528" />
+        <rect x="796" y="416" width="120" height="112" />
+      </g>
+      <path d="M0 528 H1200" stroke={alt} stroke-width="5" opacity="0.7" />
+      <circle cx="236" cy="228" r="78" fill="none" stroke={alt} stroke-width="5" opacity="0.6" />
+    </>
+  )}
+
+  {c.motivo === 'arco' && (
+    /* Día del Niño: el arco de entrada, en bandas concéntricas. */
+    <g fill="none" stroke-width="46" transform={`translate(0 ${CARTELA})`}>
+      <path d="M170 0 A430 430 0 0 1 1030 0" stroke={c.ink} opacity="0.92" />
+      <path d="M216 0 A384 384 0 0 1 984 0" stroke={alt} />
+      <path d="M262 0 A338 338 0 0 1 938 0" stroke="#FF6B00" />
+      <path d="M308 0 A292 292 0 0 1 892 0" stroke="#FFFFFF" />
+      <path d="M354 0 A246 246 0 0 1 846 0" stroke={alt} opacity="0.5" />
+    </g>
+  )}
+
+  {c.motivo === 'franja' && (
+    /* Campeones Sin Límites: la partición del key visual y su franja de texto. */
+    <>
+      <rect x="600" y="0" width="600" height={CARTELA} fill={c.ink} opacity="0.12" />
+      <path d={`M600 0 V${CARTELA}`} stroke={c.ink} stroke-width="5" opacity="0.5" />
+      <rect x="0" y="238" width="1200" height="76" fill={c.ink} opacity="0.18" />
+      <path d="M0 180 H1200M0 372 H1200" stroke={c.ink} stroke-width="5" opacity="0.5" />
+      <circle cx="898" cy="120" r="44" fill="none" stroke={c.ink} stroke-width="5" opacity="0.5" />
+    </>
+  )}
+
+  {c.motivo === 'rayas' && (
+    /* Toys"R"Us: las rayas verticales de la pieza y la estrella. */
+    <>
+      <defs>
+        <pattern id={uid} width="120" height={CARTELA} patternUnits="userSpaceOnUse">
+          <rect width="60" height={CARTELA} fill={alt} opacity="0.9" />
+        </pattern>
+      </defs>
+      <rect width="1200" height={CARTELA} fill={`url(#${uid})`} />
+      <path d="M944 118 L979 216 L1083 218 L1000 281 L1030 381 L944 321 L858 381 L888 281 L805 218 L909 216 Z" fill={c.ink} />
+    </>
+  )}
+
+  {c.motivo === 'flora' && (
+    /* New Romantic: la trama del papel mural, en línea y muy suave. */
+    <>
+      <defs>
+        <pattern id={uid} width="200" height="200" patternUnits="userSpaceOnUse">
+          <g fill="none" stroke={alt} stroke-width="4" opacity="0.55">
+            <path d="M100 44 C140 74 140 126 100 156 C60 126 60 74 100 44 Z" />
+            <path d="M100 44 V156" />
+            <path d="M0 156 C30 126 30 74 0 44M200 156 C170 126 170 74 200 44" />
+          </g>
+        </pattern>
+      </defs>
+      <rect width="1200" height={CARTELA} fill={`url(#${uid})`} />
+    </>
+  )}
+
+  {c.motivo === 'escalera' && (
+    /* Ventas Privadas: la escalera de descuentos del tótem. */
+    <>
+      <g fill={c.ink} opacity="0.92">
+        <rect x="72" y="112" width="560" height="44" />
+        <rect x="72" y="188" width="470" height="44" />
+        <rect x="72" y="264" width="380" height="44" />
+        <rect x="72" y="340" width="290" height="44" />
+      </g>
+      <rect x="72" y="416" width="200" height="44" fill={alt} />
+      <rect x="856" y="112" width="272" height="348" fill="none" stroke={c.ink} stroke-width="5" opacity="0.4" />
+    </>
+  )}
+
+  {c.motivo === 'destacado' && (
+    /* Me fascinan las sandalias: la caja magenta sobre la línea de texto. */
+    <>
+      <rect x="72" y="150" width="430" height="100" fill={alt} />
+      <rect x="526" y="150" width="320" height="100" fill={c.ink} opacity="0.9" />
+      <path d="M72 334 H1128M72 408 H1128M72 482 H880" stroke={c.ink} stroke-width="5" opacity="0.28" />
+      <rect x="1004" y="450" width="124" height="64" fill={c.ink} opacity="0.9" />
+    </>
+  )}
+
+  {c.motivo === 'aura' && (
+    /* Ripley Beauty: los halos concéntricos del save the date. */
+    <>
+      <g fill="none" stroke={alt} stroke-width="6" opacity="0.8">
+        <circle cx="880" cy="288" r="88" />
+        <circle cx="880" cy="288" r="152" />
+        <circle cx="880" cy="288" r="216" />
+        <circle cx="880" cy="288" r="280" />
+      </g>
+      <circle cx="880" cy="288" r="42" fill={c.ink} opacity="0.85" />
+    </>
+  )}
+
+  {c.motivo === 'grilla' && (
+    /* Gamer Week: la grilla en perspectiva y sus líneas de neón. */
+    <>
+      <g stroke={alt} stroke-width="5" opacity="0.8">
+        <path d={`M600 196 L-150 ${CARTELA}M600 196 L60 ${CARTELA}M600 196 L270 ${CARTELA}M600 196 L600 ${CARTELA}M600 196 L930 ${CARTELA}M600 196 L1140 ${CARTELA}M600 196 L1350 ${CARTELA}`} />
+      </g>
+      <g stroke={c.ink} stroke-width="4" opacity="0.45">
+        <path d="M0 268 H1200M0 324 H1200M0 404 H1200M0 512 H1200" />
+      </g>
+      <g stroke={alt} stroke-width="7" opacity="0.95" stroke-linecap="round">
+        <path d="M888 86 H1104M1104 86 V214" />
+      </g>
+    </>
+  )}
+
+  {c.motivo === 'guirnalda' && (
+    /* Fiestas Patrias: la guirnalda de banderines y la estrella. */
+    <>
+      <path d="M0 132 Q600 300 1200 132" fill="none" stroke={c.ink} stroke-width="5" opacity="0.7" />
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+        const t = (i + 0.5) / 8;
+        const x = t * 1200;
+        const y = 132 + 2 * (1 - t) * t * 168;
+        return <path d={`M${x - 44} ${y} L${x + 44} ${y} L${x} ${y + 100} Z`} fill={i % 2 ? alt : c.ink} opacity="0.92" />;
+      })}
+      <path d="M996 362 L1026 446 L1114 448 L1043 501 L1069 586 L996 534 L923 586 L949 501 L878 448 L966 446 Z" fill={c.ink} opacity="0.9" />
+    </>
+  )}
+
+  {c.motivo === 'counter' && (
+    /* Activaciones: el counter 200 × 75 y los bloques de las marcas invitadas. */
+    <>
+      <rect x="72" y="120" width="1056" height="264" fill="none" stroke={c.ink} stroke-width="8" opacity="0.85" />
+      <rect x="72" y="120" width="1056" height="62" fill={c.ink} opacity="0.85" />
+      <g fill={c.ink} opacity="0.22">
+        <rect x="132" y="242" width="200" height="82" />
+        <rect x="372" y="242" width="200" height="82" />
+        <rect x="612" y="242" width="200" height="82" />
+        <rect x="852" y="242" width="216" height="82" />
+      </g>
+      <path d="M72 460 H1128" stroke={c.ink} stroke-width="5" opacity="0.45" />
+    </>
+  )}
+
+  {/* Cartela: campo limpio para que el texto no compita nunca con el motivo. */}
+  <rect y={CARTELA} width="1200" height={900 - CARTELA} fill={c.field} />
+
+  <text class="pz__rotulo" x="72" y={base - tam - 30} style={`fill:${c.ink}`}>{rotulo}</text>
+  {c.lineas.map((l, i) => (
+    <text
+      class="pz__t"
+      x="72"
+      y={base + i * alto}
+      style={`fill:${c.ink};font-family:${fam};font-weight:${peso};font-size:${tam}px;letter-spacing:${c.track ?? -0.02}em;text-transform:${caja}`}
+    >{l}</text>
+  ))}
+</svg>
+
+<style>
+  .pz { display: block; width: 100%; height: 100%; }
+  .pz__rotulo { font-family: var(--text); font-size: 30px; font-weight: 500; opacity: 0.8; }
+</style>
