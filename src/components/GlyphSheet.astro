@@ -1,0 +1,72 @@
+---
+/* Lámina de vectores de una marca: cada familia con su descripción, su conteo y su grilla.
+   Los SVG usan `currentColor`, así que el color lo pone la lámina, no cada pieza. */
+import type { GrupoGlifos } from '../data/biblioteca-muralia';
+
+interface Props {
+  groups: GrupoGlifos[];
+  /** Colores de la lámina: tinta, papel y filete. Son los de la marca, no los del sitio. */
+  ink?: string;
+  paper?: string;
+  line?: string;
+}
+const { groups, ink = '#1c1c1a', paper = '#ffffff', line = '#e4e4e0' } = Astro.props;
+---
+<div class="sheet" style={`--gl-ink:${ink};--gl-paper:${paper};--gl-line:${line}`}>
+  {groups.map((g) => (
+    <section class="fam" aria-labelledby={`fam-${g.id}`}>
+      <div class="fam__head">
+        <h3 id={`fam-${g.id}`} class="h3">{g.title}</h3>
+        <p class="fam__n">{g.items.length}</p>
+        <p class="fam__desc">{g.desc}</p>
+      </div>
+      <ul class="fam__grid">
+        {g.items.map((it) => (
+          <li class:list={['gl', { 'gl--wide': it.wide }]}>
+            <figure class="gl__fig">
+              <span class="gl__pv" set:html={it.svg} />
+              <figcaption class="gl__nm">{it.name}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</div>
+
+<style>
+  .sheet { display: grid; gap: clamp(2rem, 4vw, 3.5rem); }
+
+  .fam__head { display: grid; grid-template-columns: 1fr auto; gap: 0 var(--s-4); align-items: baseline; margin-bottom: var(--s-4); }
+  .fam__n { font-size: var(--t-small); color: var(--fg-2); font-variant-numeric: tabular-nums; }
+  .fam__desc { grid-column: 1 / -1; margin-top: var(--s-1); font-size: var(--t-small); color: var(--fg-2); max-width: 62ch; }
+
+  /* Grilla sin huecos: cada celda dibuja su filete superior e izquierdo y la lámina
+     cierra el rectángulo, así las celdas sobrantes de la última fila quedan en blanco. */
+  .fam__grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+    background: var(--gl-paper); box-shadow: inset 0 0 0 1px var(--gl-line);
+  }
+  .gl {
+    display: flex; min-width: 0; color: var(--gl-ink);
+    box-shadow: inset 1px 0 0 var(--gl-line), inset 0 1px 0 var(--gl-line);
+  }
+  .gl__fig { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .gl--wide { grid-column: span 2; }
+
+  .gl__pv { display: grid; place-items: center; height: 92px; padding: var(--s-4); }
+  .gl__pv :global(svg) { width: 44px; height: 44px; max-width: 100%; max-height: 100%; overflow: visible; }
+  .gl--wide .gl__pv :global(svg) { width: 100%; height: auto; max-height: 60px; }
+
+  .gl__nm {
+    padding: var(--s-2) var(--s-3) var(--s-3);
+    border-top: 1px solid var(--gl-line);
+    font-size: 0.75rem; line-height: 1.3; overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 599px) {
+    .fam__grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
+    .gl__pv { height: 76px; padding: var(--s-3); }
+    .gl__pv :global(svg) { width: 36px; height: 36px; }
+  }
+</style>

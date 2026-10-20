@@ -76,6 +76,7 @@ Los campos `field`, `ink` y `alt` de cada proyecto y el `surface` de cada bloque
 
 - **Piezas completas**, siempre en su proporción (`object-fit: contain` o caja con la proporción exacta). Nunca se recortan piezas gráficas.
 - **Fotos** (montaje, tienda, estudio) sí se recortan, con punto focal definido en los datos.
+- **Retrato de Javi:** uno solo, redondo y chico, en la barra lateral. Ni la portada ni Experiencia llevan una foto grande suya: en su lugar va una ficha de datos. El sitio muestra el trabajo, no a la autora.
 - Sin sombras, sin bordes, sin esquinas redondeadas. Las piezas completas llevan un filete interior casi invisible (1 px, tinta al 7 %) para que las claras no se pierdan en el blanco.
 - Formatos: AVIF + WebP con `srcset`, anchos 480–2400 px. Lazy loading salvo la primera imagen visible. `width` y `height` siempre declarados.
 - **Exclusiones permanentes:** niños o menores reconocibles (incluidos modelos de campaña y deportistas menores de 18), documentos personales, KV de agencias como trabajo propio, stickers con caras reales.
@@ -101,13 +102,18 @@ Los campos `field`, `ink` y `alt` de cada proyecto y el `surface` de cada bloque
 | `swatches` | Paleta del proyecto a todo el ancho |
 | `statement` | Una frase del proyecto en el cuerpo de la portada |
 | `notes` | Contexto y decisiones, texto a dos columnas |
+| `glyphs` | Lámina de vectores de una biblioteca de marca, por familias, con su conteo |
+| `fondos` | Lámina de contactos de los fondos de pantalla de una marca |
 | `video` | Loop sin sonido, con control de pausa |
+
+Las bibliotecas gráficas viven en `src/data/biblioteca-<marca>.ts` y se registran en `src/data/bibliotecas.ts`. Los vectores se dibujan con `currentColor` y la lámina pone los colores de esa marca (los únicos colores que no son neutros fuera de una pieza); los fondos son archivos SVG en `public/<marca>/fondos/`, cargados en diferido.
 
 ## 9. Navegación
 
 - Barra fija arriba, blanca translúcida: "Javi Molin" a la izquierda; Proyectos y Sobre mí en gris y el botón Contacto a la derecha.
 - Portada: nombre, rol y acciones + marco de formatos → proyectos → presentación breve → contacto.
 - Cada caso empieza con un enlace a Todos los proyectos y termina con Anterior / Todos los proyectos / Siguiente.
+- Entre la pieza principal y el primer bloque, un **índice del caso**: las secciones numeradas, en tres columnas, con ancla a cada una. Aparece solo cuando el caso tiene más de dos secciones con título.
 - Sin menú hamburguesa: en móvil caben los tres enlaces.
 
 ## 10. Botones y enlaces

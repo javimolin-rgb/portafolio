@@ -1,3 +1,5 @@
+import { slugify } from '../lib/slug';
+
 /* Proyectos del portfolio.
    Cada pieza se referencia como 'proyecto/archivo' → src/assets/work/proyecto/archivo.(jpg|png).
    Ver DESIGN.md §8 para la biblioteca de bloques. */
@@ -31,7 +33,14 @@ export type Block =
   | { kind: 'statement'; text: string; note?: string; pieces?: Piece[]; surface?: Surface }
   | { kind: 'anatomy'; heading?: string; piece: Piece; zones: { x: number; y: number; w: number; h: number; title: string; text: string }[]; surface?: Surface; note?: string }
   | { kind: 'markers'; heading?: string; piece: Piece; points: { x: number; y: number; title: string; text: string }[]; surface?: Surface }
-  | { kind: 'pair'; heading?: string; a: Piece; b: Piece; text?: string; surface?: Surface };
+  | { kind: 'pair'; heading?: string; a: Piece; b: Piece; text?: string; surface?: Surface }
+  /** Lámina de vectores de una biblioteca de marca (ver src/data/biblioteca-*.ts). */
+  | { kind: 'glyphs'; heading: string; set: BibliotecaId; groups?: string[]; intro?: string; note?: string; surface?: Surface }
+  /** Lámina de contactos de fondos de pantalla de una biblioteca de marca. */
+  | { kind: 'fondos'; heading: string; set: BibliotecaId; intro?: string; note?: string; surface?: Surface };
+
+/** Bibliotecas gráficas disponibles. Cada una vive en su propio módulo de datos. */
+export type BibliotecaId = 'muralia';
 
 export type Project = {
   slug: string;
@@ -59,6 +68,19 @@ export type Project = {
 
 const p = (ref: string, name: string, format?: string, extra: Partial<Piece> = {}): Piece => ({ ref, name, format, ...extra });
 
+/** Título de un bloque, si lo tiene. Sirve para el ancla y para el índice del caso. */
+export const headingOf = (b: Block): string | undefined => ('heading' in b ? b.heading : undefined);
+
+/** Bloques cuyo título no se dibuja: no son destino de un ancla. */
+const sinAncla = new Set(['notes']);
+
+/** Secciones navegables de un caso: los bloques que dibujan su título. */
+export const sectionsOf = (blocks: Block[]) =>
+  blocks.flatMap((b) => {
+    const h = headingOf(b);
+    return h && !sinAncla.has(b.kind) ? [{ id: `s-${slugify(h)}`, label: h }] : [];
+  });
+
 export const stretchFor = (ratio: number) => Math.round(Math.min(150, Math.max(50, 100 + 60 * Math.log2(ratio))));
 
 export const projects: Project[] = [
@@ -69,13 +91,13 @@ export const projects: Project[] = [
     category: 'Identidad, redes y sitio web',
     client: 'Muralia',
     year: '2026',
-    role: 'Identidad, manual de marca, carruseles, catálogo en historias y sitio web',
+    role: 'Identidad, manual de marca, biblioteca gráfica, carruseles, catálogo en historias y sitio web',
     status: 'Freelance, en curso',
-    formats: ['Manual de marca', 'Carruseles Instagram 1080 × 1350', 'Documentos LinkedIn', 'Historias', 'Sitio web'],
+    formats: ['Manual de marca', 'Biblioteca de 124 vectores SVG', '52 fondos 1080 × 1920 y 1920 × 1080', 'Carruseles Instagram 1080 × 1350', 'Documentos LinkedIn', 'Historias 1080 × 1920', 'Sitio web'],
     format: { name: 'Carrusel 4:5', ratio: 0.8 },
     field: '#C2551F',
     ink: '#FFFDF9',
-    summary: 'Muralia vende directo y asesora en aislación térmica, acústica y protección pasiva contra incendios para obras en Chile. Creé su identidad y su manual de marca, los carruseles con que abrió sus redes, un catálogo de productos en historias y el sitio muralia.cl.',
+    summary: 'Muralia vende directo y asesora en aislación térmica, acústica y protección pasiva contra incendios para obras en Chile. Creé su identidad, su manual de marca y una biblioteca gráfica de 124 vectores y 52 fondos, además de los carruseles con que abrió sus redes, un catálogo de productos en historias y el sitio muralia.cl.',
     cover: p('muralia/obra_01', 'Carrusel de apertura', 'Instagram, 1080 × 1350'),
     hero: { piece: p('muralia/logo_arcilla', 'Isotipo Muralia', 'Papel sobre arcilla', { alt: 'Isotipo de Muralia: las sílabas MUR y ALIA en dos líneas dentro de un marco cuadrado, en blanco sobre terracota.' }), mode: 'piece' },
     blocks: [
@@ -83,12 +105,15 @@ export const projects: Project[] = [
         kind: 'notes',
         text: [
           'Una marca nueva en un rubro técnico: aislación, protección pasiva contra incendios, tabiques y cielos. Tenía que verse seria para minería e industria, y clara para quien construye una casa.',
+          'En vez de entregar un logo y un par de plantillas, armé un sistema cerrado: manual, paleta, tipografías, una biblioteca de 124 vectores y 52 fondos. Con eso Muralia publica, cotiza y presenta sin pedirme una pieza nueva cada vez.',
           'La identidad se usa igual en el sitio, en Instagram, en LinkedIn y en las cotizaciones.',
         ],
         decisions: [
           'Una paleta de materiales de obra (arcilla, grafito, yeso, musgo) y sin azul ni rojo, los colores más usados en el rubro.',
           'Bebas Neue para titulares y Archivo para el texto: titulares que se leen de lejos y datos técnicos que se leen de cerca.',
           'Un isotipo de una sola versión: MUR / ALIA en dos líneas, dentro de un marco cuadrado.',
+          'Todo el vocabulario gráfico sale de ese marco: línea de grosor constante, esquinas rectas y nada de degradados ni sombras.',
+          'Cada vector se dibuja con un solo color, para que la misma pieza sirva en grafito sobre papel, en papel sobre arcilla o en yeso sobre musgo.',
         ],
       },
       {
@@ -101,6 +126,50 @@ export const projects: Project[] = [
           p('muralia/manual_03', 'Colores', 'Siete colores en hexadecimal'),
           p('muralia/manual_04', 'Tipografía', 'Bebas Neue y Archivo'),
         ],
+        note: 'Cuatro láminas, una por decisión: qué es la marca, cómo se usa el logo, con qué colores y con qué tipografías. Es lo que se le pasa a un proveedor o a una imprenta antes de empezar.',
+      },
+      {
+        kind: 'swatches',
+        heading: 'Siete colores de obra',
+        colors: [
+          { hex: '#C2551F', name: 'Arcilla', ink: '#FFFDF9' },
+          { hex: '#9C4318', name: 'Arcilla oscura', ink: '#FFFDF9' },
+          { hex: '#2B2A26', name: 'Grafito', ink: '#FFFDF9' },
+          { hex: '#3E4A3C', name: 'Musgo', ink: '#EFE7DA' },
+          { hex: '#EFE7DA', name: 'Yeso', ink: '#2B2A26' },
+          { hex: '#FFFDF9', name: 'Papel', ink: '#2B2A26' },
+          { hex: '#DDD5C4', name: 'Filete', ink: '#2B2A26' },
+        ],
+      },
+      {
+        kind: 'glyphs',
+        heading: 'Iconos',
+        set: 'muralia',
+        groups: ['iconos'],
+        intro: 'Los productos, las propiedades técnicas, los sectores donde Muralia trabaja y los datos de contacto, dibujados con la misma regla: grilla de 48 × 48, trazo de 3, esquinas rectas y remates cuadrados. Así un icono de lana y uno de teléfono pesan lo mismo dentro de una lámina.',
+        note: 'Todos se entregan en SVG con un solo color, para que la empresa los pegue en una cotización, en un catálogo o en el sitio sin pedir versiones nuevas.',
+      },
+      {
+        kind: 'glyphs',
+        heading: 'Franjas, marcos y señalética',
+        set: 'muralia',
+        groups: ['franjas', 'marcos-y-contenedores', 'senaletica-de-plano', 'vinetas-flechas-y-separadores', 'marcadores'],
+        intro: 'Lo que arma la página: bandas para cabeceras y pies, marcos para encuadrar fotos y datos, símbolos tomados del dibujo técnico de arquitectura, y las viñetas y flechas de las listas. Las franjas se repiten al infinito, así que sirven igual en un story que en un pendón.',
+        note: 'Las setenta piezas salen del mismo marco cuadrado del isotipo y del aparejo de ladrillos, de modo que cualquier combinación se ve de la misma familia.',
+      },
+      {
+        kind: 'pair',
+        heading: 'Patrones de marca',
+        a: p('muralia/patron_aparejo', 'Aparejo', 'Fondo 1920 × 1080'),
+        b: p('muralia/patron_lana', 'Lana', 'Fondo 1920 × 1080'),
+        text: 'Patrones dibujados a partir de los materiales: el aparejo de ladrillos y la curva de la lana aislante. De estos dos sale el resto de los fondos.',
+      },
+      {
+        kind: 'fondos',
+        heading: 'Fondos de pantalla',
+        set: 'muralia',
+        intro: 'Cincuenta y dos fondos sin logo, cada uno en vertical 1080 × 1920 y horizontal 1920 × 1080: aparejos, achurados, cortes de muro, ejes de plano, ondas acústicas y curvas de temperatura. Sirven de fondo para una historia, de portada de una presentación o de pantalla de un computador en la oficina.',
+        note: 'Van en un solo archivo comprimido con los PNG listos, y en SVG para recolorearlos con cualquiera de los siete colores de la marca.',
       },
       {
         kind: 'row',
@@ -134,7 +203,7 @@ export const projects: Project[] = [
           p('muralia/portada_12', 'Cotiza en 3 pasos', 'Portada musgo'),
           p('muralia/yeso_02', 'Qué es una placa de yeso cartón', 'Lámina interior'),
         ],
-        note: 'Las portadas rotan entre arcilla, grafito, yeso y musgo, para que el perfil se lea ordenado.',
+        note: 'Las portadas rotan entre arcilla, grafito, yeso y musgo, para que el perfil se lea ordenado. Cada una usa un icono y una franja de la biblioteca, nunca una ilustración suelta.',
       },
       {
         kind: 'row',
@@ -149,15 +218,10 @@ export const projects: Project[] = [
         note: 'El catálogo se ordena en tres líneas (Confort, Seguridad y Estructura), cada una con una entrada animada. Cada producto lleva sus espesores, dónde se usa y un botón para cotizar.',
       },
       {
-        kind: 'pair',
-        heading: 'Patrones de marca',
-        a: p('muralia/patron_aparejo', 'Aparejo', 'Fondo 1920 × 1080'),
-        b: p('muralia/patron_lana', 'Lana', 'Fondo 1920 × 1080'),
-        text: 'Patrones dibujados a partir de los materiales: el aparejo de ladrillos y la curva de la lana aislante.',
-      },
-      {
-        kind: 'piece',
-        piece: p('muralia/sitio_web', 'Sitio web muralia.cl', 'Portada, escritorio'),
+        kind: 'stack',
+        heading: 'Sitio web',
+        pieces: [p('muralia/sitio_web', 'muralia.cl', 'Portada, escritorio')],
+        note: 'El sitio usa la misma biblioteca: franjas de aparejo en las cabeceras, iconos en las tres líneas de producto y la cartela de plano en los datos de contacto.',
       },
     ],
     credits: ['Fotos de producto: material de los fabricantes.'],

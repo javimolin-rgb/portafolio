@@ -1,10 +1,15 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
-import foto from '../../assets/perfil/foto-sobre-mi.jpg';
 import { experiencia, formacion, hace, herramientas } from '../../data/perfil';
 import { url } from '../../lib/assets';
+
+const ficha = [
+  { k: 'Título', v: 'Diseñadora Integral UC, 2019 a 2024' },
+  { k: 'Diplomado', v: 'Branding y Valor de Marca, UC' },
+  { k: 'Docencia', v: 'Ayudante de cátedra, Escuela de Diseño UC' },
+  { k: 'Base', v: 'Santiago, Chile. Proyectos en Chile y Perú' },
+] as const;
 ---
 <Base
   title="Experiencia — Javi Molin"
@@ -23,7 +28,11 @@ import { url } from '../../lib/assets';
           <a class="btn btn--ghost" href="mailto:javimolin@gmail.com"><Icon name="mail" size={18} />Escribir un correo</a>
         </div>
       </div>
-      <Picture class="bio__photo" src={foto} alt="Javi Molin" widths={[480, 800]} sizes="(min-width: 1000px) 28vw, 92vw" formats={['avif']} fallbackFormat="webp" />
+      <dl class="bio__ficha">
+        {ficha.map((f) => (
+          <div><dt>{f.k}</dt><dd>{f.v}</dd></div>
+        ))}
+      </dl>
     </div>
   </header>
 
@@ -75,7 +84,9 @@ import { url } from '../../lib/assets';
   .bio .prose { max-width: 60ch; color: var(--fg-2); }
   .bio .lead { color: var(--fg); }
   .bio__actions { margin-top: var(--s-6); }
-  :global(.bio__photo) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 40%; }
+  .bio__ficha { font-size: var(--t-small); border-top: 1px solid var(--rule); }
+  .bio__ficha div { display: grid; grid-template-columns: 5.5rem 1fr; gap: var(--s-3); padding-block: var(--s-3); border-bottom: 1px solid var(--rule); }
+  .bio__ficha dt { color: var(--fg-2); }
   .sec__title { margin-bottom: var(--s-5); }
   .cv { border-top: 1px solid var(--rule); }
   .cv li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: var(--gap); padding-block: var(--s-5); border-bottom: 1px solid var(--rule); }
@@ -87,7 +98,6 @@ import { url } from '../../lib/assets';
   .tags li { padding: 0.375rem 0.75rem; border: 1px solid var(--rule); border-radius: 6px; font-size: 0.875rem; }
   @media (max-width: 899px) {
     .bio, .two { grid-template-columns: 1fr; }
-    :global(.bio__photo) { aspect-ratio: 3 / 2; }
     .cv li { grid-template-columns: 1fr; gap: var(--s-1); }
   }
 </style>
