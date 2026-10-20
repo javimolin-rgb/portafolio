@@ -70,7 +70,9 @@ Botón principal: fondo tinta, texto blanco. Secundario: borde gris, texto tinta
 | `--ink-2` | `#72726C` | Texto secundario, navegación inactiva |
 | `--rule` | `#E4E4E0` | Filetes y subrayados en reposo |
 
-Los campos `field`, `ink` y `alt` de cada proyecto y el `surface` de cada bloque quedan en los datos, pero esta dirección no los usa: todas las superficies se resuelven a blanco (ver `.s-*` en `global.css`).
+El `surface` de cada bloque queda en los datos, pero esta dirección no lo usa: todas las superficies del caso se resuelven a blanco (ver `.s-*` en `global.css`).
+
+Los campos `field`, `ink` y `alt` de cada proyecto sí se usan, y en un solo lugar: la **lámina de portada** del índice. Es la excepción a "color solo en las piezas", y es deliberada: la portada *es* la pieza del proyecto dentro del índice.
 
 ## 6. Imágenes
 
@@ -87,7 +89,23 @@ Los campos `field`, `ink` y `alt` de cada proyecto y el `surface` de cada bloque
 - Márgenes `clamp(1.25rem, 4vw, 4rem)`; medianil `clamp(1rem, 2vw, 2rem)`.
 - Dos proporciones de columnas, siempre las mismas: 7/5 (texto + dato, frase + marco) y 1/1 (índice).
 - Todo alineado a la izquierda. Las secciones se separan con espacio (`--section`) y, cuando cambia el tema, con un filete `--rule` sobre el título.
-- Índice: dos columnas de placas 4:3. Las piezas gráficas se ven completas con aire alrededor; las fotos de montaje llenan la placa.
+- Índice: dos columnas de **láminas de portada** 4:3, una por proyecto, siempre completas y a sangre dentro de su placa. Nunca se recorta una portada ni se mete una pieza vertical en una caja horizontal.
+
+### Lámina de portada
+
+Una por proyecto, en `src/data/portadas.ts` y dibujada por `Portada.astro` sobre un lienzo 1200 × 900. Las doce comparten estructura, y lo que cambia son las normas gráficas del proyecto:
+
+| Parte | Qué lleva |
+|---|---|
+| Fondo | El `field` del proyecto |
+| Motivo | Una figura sacada de su propia gráfica (el aparejo de Muralia, el arco del Día del Niño, las rayas de Toys"R"Us, la grilla en perspectiva de Gamer Week), dibujada sobre la banda de arriba |
+| Cartela | Campo limpio en los 304 px de abajo, para que el texto no compita nunca con el motivo |
+| Rótulo | El formato emblemático del proyecto (`format.name`): "Arco de entrada", "Pendón 100 × 200 cm" |
+| Título | El nombre del proyecto, en la serif o la sans del sitio según la voz de esa marca |
+
+Son **gráfica del portafolio, no piezas entregadas al cliente**: por eso no reproducen logos ni tipografías de marca, y el trabajo real aparece recién dentro del caso. Dos licencias que valen solo aquí, dentro de la lámina, y no en el resto del sitio: la caja alta espaciada de Campeones Sin Límites y la caja baja de Gamer Week y de Me fascinan las sandalias.
+
+El pie de la tarjeta no repite el nombre: lleva el tipo de trabajo y el cliente con el año.
 
 ## 8. Biblioteca de bloques para casos
 
@@ -128,7 +146,7 @@ Las bibliotecas gráficas viven en `src/data/biblioteca-<marca>.ts` y se registr
 |---|---|---|
 | Marco de formatos | La caja cambia de proporción y la pieza cambia por fundido | 700 ms `ease-in-out`; avanza cada 3,2 s; pausa al pasar el mouse, al enfocar y con botón |
 | Índice | La portada crece 2 % al pasar el mouse | 600 ms `ease-out` |
-| Cambio de página | View Transitions nativas: el nombre del proyecto pasa del índice al título del caso | 450 ms |
+| Cambio de página | View Transitions nativas: la lámina de portada del índice se convierte en la pieza principal del caso | 450 ms |
 
 - Nada de aparición "fade-up" por sección.
 - `prefers-reduced-motion`: el marco no avanza solo y las transiciones se desactivan.
@@ -157,11 +175,12 @@ Las bibliotecas gráficas viven en `src/data/biblioteca-<marca>.ts` y se registr
 
 ## 15. Evitar
 
-Fondos de color por proyecto, tipografías estiradas, varias familias, tarjetas con sombra, gradientes, esquinas redondeadas, fondo crema, monoespaciada, mayúsculas espaciadas, numeración fuera de procesos reales, fade-up por sección, parallax, cursor personalizado, métricas inventadas.
+Fondos de color por proyecto en las páginas (la lámina de portada es la única excepción, ver §7), tipografías estiradas, varias familias, tarjetas con sombra, gradientes, esquinas redondeadas, fondo crema, monoespaciada, mayúsculas espaciadas, numeración fuera de procesos reales, fade-up por sección, parallax, cursor personalizado, métricas inventadas.
 
 ## 16. Tecnología
 
 - **Astro 5**, CSS propio con custom properties (sin framework CSS), TypeScript para los datos.
-- Datos de proyectos en `src/data/projects.ts`; imágenes fuente en `src/assets/work/<proyecto>/`; videos en `public/video/`.
+- Datos de proyectos en `src/data/projects.ts`; portadas del índice en `src/data/portadas.ts`; bibliotecas gráficas en `src/data/biblioteca-<marca>.ts`, registradas en `src/data/bibliotecas.ts`.
+- Imágenes fuente en `src/assets/work/<proyecto>/`; videos en `public/video/`; fondos de marca en `public/<marca>/fondos/`.
 - View Transitions entre documentos (`@view-transition { navigation: auto }`), sin router de cliente.
 - Despliegue en GitHub Pages con la Action oficial de Astro.
