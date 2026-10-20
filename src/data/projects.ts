@@ -42,6 +42,22 @@ export type Block =
 /** Bibliotecas gráficas disponibles. Cada una vive en su propio módulo de datos. */
 export type BibliotecaId = 'muralia';
 
+/** Una capa de la portada: posición (x, y = centro) y ancho, en % de la placa 4:3. */
+export type Capa = { ref: string; x: number; y: number; w: number; rot?: number; z?: number };
+
+/** Portada de la tarjeta: campo de color del proyecto, su marca y sus ilustraciones.
+    Todo sale de piezas reales; los recortes viven en src/assets/portadas/. */
+export type Portada = {
+  /** Color de la placa. Cuando la marca trae su propio fondo, es ese mismo color. */
+  campo: string;
+  /** Marca o logotipo del proyecto, recortado de una pieza suya. */
+  marca: { ref: string; x: number; y: number; w: number };
+  /** Trama o textura del proyecto, a sangre bajo las demás capas. */
+  trama?: string;
+  /** Ilustraciones del proyecto. */
+  piezas?: Capa[];
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -61,6 +77,8 @@ export type Project = {
   alt?: { bg: string; ink: string };
   summary: string;
   cover: Piece;
+  /** Portada compuesta de la tarjeta. */
+  portada: Portada;
   hero: { piece: Piece; mode: 'bleed' | 'piece'; surface?: Surface };
   blocks: Block[];
   credits?: string[];
@@ -99,6 +117,11 @@ export const projects: Project[] = [
     ink: '#FFFDF9',
     summary: 'Muralia vende directo y asesora en aislación térmica, acústica y protección pasiva contra incendios para obras en Chile. Creé su identidad, su manual de marca y una biblioteca gráfica de 124 vectores y 52 fondos, además de los carruseles con que abrió sus redes, un catálogo de productos en historias y el sitio muralia.cl.',
     cover: p('muralia/obra_01', 'Carrusel de apertura', 'Instagram, 1080 × 1350'),
+    portada: {
+      campo: '#C2551F',
+      trama: 'muralia/patron_aparejo',
+      marca: { ref: 'muralia/logo_arcilla', x: 50, y: 50, w: 38 },
+    },
     hero: { piece: p('muralia/logo_arcilla', 'Isotipo Muralia', 'Papel sobre arcilla', { alt: 'Isotipo de Muralia: las sílabas MUR y ALIA en dos líneas dentro de un marco cuadrado, en blanco sobre terracota.' }), mode: 'piece' },
     blocks: [
       {
@@ -242,6 +265,10 @@ export const projects: Project[] = [
     ink: '#FFFFFF',
     summary: 'Neorigen diseña y construye casas prediseñadas sustentables, levantadas en el terreno de cada cliente y entregadas llave en mano. Hice su manual de marca, las piezas para redes sociales y el nuevo sitio neorigen.cl, con una ficha para cada modelo.',
     cover: p('neorigen/web_01', 'Estrenamos casa digital', 'Carrusel, 1080 × 1350'),
+    portada: {
+      campo: '#011E2E',
+      marca: { ref: 'portadas/marca-neorigen', x: 50, y: 50, w: 38 },
+    },
     hero: { piece: p('neorigen/sitio_web', 'Sitio web neorigen.cl', 'Portada, escritorio', { alt: 'Portada del sitio de Neorigen: una casa de madera oscura en el bosque, el título Vive lo natural, a tu manera, y datos de los modelos.' }), mode: 'piece' },
     blocks: [
       {
@@ -338,6 +365,17 @@ export const projects: Project[] = [
     alt: { bg: '#FF0094', ink: '#FFFFFF' },
     summary: 'Un evento para familias dentro de la tienda abierta, en Ripley Costanera Center. Diseñé el espacio y sus elementos, definí la paleta para todos los proveedores y preparé impresos y merchandising.',
     cover: p('dia-del-nino/ddn_f1346', 'Arco de entrada instalado', 'Foto de montaje', { focus: '50% 45%' }),
+    portada: {
+      campo: '#424548',
+      marca: { ref: 'portadas/marca-dia-del-nino', x: 50, y: 44, w: 64 },
+      piezas: [
+        { ref: 'portadas/forma-arco-puntos', x: 11, y: 74, w: 14 },
+        { ref: 'portadas/forma-arco-rayas', x: 89, y: 74, w: 16 },
+        { ref: 'portadas/forma-onda', x: 50, y: 82, w: 42 },
+        { ref: 'portadas/forma-estrella', x: 14, y: 20, w: 10 },
+        { ref: 'portadas/forma-nube', x: 86, y: 21, w: 13 },
+      ],
+    },
     hero: { piece: p('dia-del-nino/ddn_f1346', 'Arco de entrada y pasillo de franjas', 'Ripley Costanera Center, 3 de agosto de 2025', { focus: '50% 42%', alt: 'Arco de entrada del Día del Niño con franjas rosadas, naranjas y amarillas, seguido por un pasillo de piso a rayas dentro de la tienda.' }), mode: 'bleed' },
     blocks: [
       {
@@ -460,6 +498,11 @@ export const projects: Project[] = [
     ink: '#FFFFFF',
     summary: 'Encuentro deportivo paralímpico de Teletón en el Estadio Nacional, con delegaciones de Santiago, Concepción, Temuco, Valdivia y Aysén. Diseñé las piezas que vistieron las sedes y preparé los originales; un mes después, la campaña en Metro con deportistas del Team Para Chile.',
     cover: p('campeones-sin-limites/c_kv1', 'Key visual de Metro', 'Campaña en Metro'),
+    portada: {
+      campo: '#F0F0EE',
+      marca: { ref: 'portadas/marca-campeones', x: 50, y: 26, w: 36 },
+      piezas: [{ ref: 'campeones-sin-limites/c_vol', x: 50, y: 72, w: 38 }],
+    },
     hero: { piece: p('campeones-sin-limites/c_kv1', 'Key visual de la campaña en Metro', 'Formato horizontal', { alt: 'Key visual: una nadadora con gorra y antiparras, las letras de Ripley de fondo y la frase "No somos una historia, hacemos historia".' }), mode: 'piece' },
     blocks: [
       {
@@ -590,6 +633,11 @@ export const projects: Project[] = [
     alt: { bg: '#F7C6D6', ink: '#101010' },
     summary: 'La juguetería Toys"R"Us llegó a Ripley Parque Arauco y Mall Marina. Sobre el concepto gráfico de la agencia ODN hice invitaciones, piezas de la inauguración, el torneo de Beyblade, piezas de tienda y las gift cards de Navidad.',
     cover: p('toys-r-us/t_std', 'Save the date', 'Post 1:1'),
+    portada: {
+      campo: '#F8ECEF',
+      marca: { ref: 'portadas/marca-toys-r-us', x: 17, y: 50, w: 22 },
+      piezas: [{ ref: 'toys-r-us/tru_don1', x: 62, y: 52, w: 48 }],
+    },
     hero: { piece: p('toys-r-us/t_std', 'Save the date de la inauguración', 'Post 1:1', { alt: 'Save the date de Toys"R"Us en Ripley: franjas rosadas y rojas, el logo de la juguetería, la jirafa Geoffrey y el oso Ripley asomándose por los bordes, y la fecha 8.11.25.' }), mode: 'piece', surface: 'alt' },
     blocks: [
       {
@@ -718,6 +766,10 @@ export const projects: Project[] = [
     ink: '#101010',
     summary: 'Campaña de temporada para moda mujer. No había key visual, así que propuse la tipografía y el tratamiento de las fotos, y después lo adapté a redes y a gráficas de tienda. Junto a ella, lanzamientos y contenidos para marcas de moda.',
     cover: p('new-romantic/s_nr_01', 'Key visual New Romantic', 'Gráfica de tienda'),
+    portada: {
+      campo: '#DBC5AD',
+      marca: { ref: 'portadas/marca-new-romantic', x: 50, y: 50, w: 76 },
+    },
     hero: { piece: p('new-romantic/s_nr_01', 'Key visual New Romantic', 'Gráfica de tienda', { alt: 'Modelo con blusa rosada tejida sobre papel mural floral, con el título "new Romantic" en serif fina y letra manuscrita.' }), mode: 'piece' },
     blocks: [
       {
@@ -806,6 +858,10 @@ export const projects: Project[] = [
     alt: { bg: '#EC008C', ink: '#141414' },
     summary: 'Eventos de venta exclusiva en tiendas de Santiago y regiones. Cada uno necesitaba el mismo paquete de piezas, con descuentos y legales que cambiaban hasta el último día.',
     cover: p('ventas-privadas/s_vp_08', 'Tótem en tienda', 'Foto de tienda', { focus: '70% 40%' }),
+    portada: {
+      campo: '#101010',
+      marca: { ref: 'portadas/marca-ventas-privadas', x: 50, y: 50, w: 70 },
+    },
     hero: { piece: p('ventas-privadas/s_vp_08', 'Tótem de Venta Exclusiva en tienda', 'Foto de tienda', { focus: '72% 40%', alt: 'Interior de una tienda Ripley con un tótem vertical negro y fucsia de Venta Exclusiva junto a los percheros.' }), mode: 'bleed' },
     blocks: [
       {
@@ -902,6 +958,10 @@ export const projects: Project[] = [
     ink: '#101010',
     summary: 'Video de temporada para las pantallas digitales de Metro de Santiago. Presenta las tendencias (cangrejeras, toe post, strappy, gladiadoras y hawaianas) y se adaptó a los distintos formatos de pantalla.',
     cover: p('me-fascinan-las-sandalias/s_sand_01v', 'Pantalla horizontal', '16:9'),
+    portada: {
+      campo: '#CBCBCB',
+      marca: { ref: 'portadas/marca-sandalias', x: 50, y: 50, w: 82 },
+    },
     hero: { piece: p('me-fascinan-las-sandalias/s_sand_01v', 'Loop para pantallas de Metro', 'Horizontal 16:9', { video: 'sand01', alt: 'Video: piernas de modelos con distintas sandalias y el título "me fascinan las sandalias", con la "a" en fucsia.' }), mode: 'piece' },
     blocks: [
       {
@@ -941,6 +1001,10 @@ export const projects: Project[] = [
     alt: { bg: '#2B1B22', ink: '#F4C9D6' },
     summary: 'Inauguración de los espacios Ripley Beauty en Marina Arauco y Costanera Center, y eventos con marcas de belleza: save the dates, una versión para clientas, gift cards de premios y gráficas de gran formato.',
     cover: p('ripley-beauty/r_stdc', 'Save the date', 'Costanera Center'),
+    portada: {
+      campo: '#F2C2D8',
+      marca: { ref: 'portadas/marca-ripley-beauty', x: 50, y: 50, w: 70 },
+    },
     hero: { piece: p('ripley-beauty/r_stdc', 'Save the date, inauguración Costanera Center', 'Story', { alt: 'Save the date de Ripley Beauty: modelo sosteniendo un labial rojo sobre fondo rosado y el título en bloque.' }), mode: 'piece', surface: 'alt' },
     blocks: [
       {
@@ -1035,6 +1099,10 @@ export const projects: Project[] = [
     ink: '#FFFFFF',
     summary: 'Propuesta de identidad para una semana de ofertas gamer de Ripley Perú, desarrollada como mini manual. No se produjo.',
     cover: p('gamer-week/s_gw_01', 'Portada del manual', '16:9'),
+    portada: {
+      campo: '#140424',
+      marca: { ref: 'portadas/marca-gamer-week', x: 50, y: 50, w: 60 },
+    },
     hero: { piece: p('gamer-week/s_gw_01', 'Portada del mini manual Gamer Week', '16:9', { alt: 'Portada del manual: íconos de controles en neón sobre un fondo oscuro y el logo "gamer week" con la firma "me fascina".' }), mode: 'piece', surface: 'dark' },
     blocks: [
       {
@@ -1075,6 +1143,17 @@ export const projects: Project[] = [
     ink: '#FFFFFF',
     summary: 'Piezas de temporada que se repiten en muchos formatos: un set de íconos ilustrados para Fiestas Patrias, gift cards por categoría y campañas para otros equipos de Ripley.',
     cover: p('fiestas-patrias/sep1', 'Set de íconos', 'Ilustración'),
+    portada: {
+      campo: '#F6EADA',
+      marca: { ref: 'portadas/marca-fiestas-patrias', x: 50, y: 47, w: 44 },
+      piezas: [
+        { ref: 'portadas/icono-banderines', x: 50, y: 13, w: 46 },
+        { ref: 'portadas/icono-chupalla', x: 15, y: 40, w: 22 },
+        { ref: 'portadas/icono-mote', x: 85, y: 40, w: 16 },
+        { ref: 'portadas/icono-empanada', x: 26, y: 82, w: 19 },
+        { ref: 'portadas/icono-guitarra', x: 74, y: 82, w: 19 },
+      ],
+    },
     hero: { piece: p('fiestas-patrias/sep1', 'Set de íconos de Fiestas Patrias', 'Ilustración vectorial', { alt: 'Ilustraciones de Fiestas Patrias: chupalla, banderines, banderas de Chile, empanada, guitarra, escarapela y mote con huesillo, con el título "18 de septiembre".' }), mode: 'piece' },
     blocks: [
       {
@@ -1136,6 +1215,11 @@ export const projects: Project[] = [
     ink: '#101010',
     summary: 'Eventos cortos con marcas dentro de Ripley: un espacio para sneakers, la llegada de la pelota del Mundial, degustaciones, marcas nuevas y piezas chicas que ordenan la tienda.',
     cover: p('activaciones/a_ch', 'Puma Challenge', 'Post'),
+    portada: {
+      campo: '#EBE2DD',
+      marca: { ref: 'portadas/marca-activaciones', x: 50, y: 30, w: 56 },
+      piezas: [{ ref: 'portadas/marca-linett', x: 50, y: 64, w: 46 }],
+    },
     hero: { piece: p('activaciones/a_ch', 'Puma Challenge', 'Post', { alt: 'Pieza Puma Challenge: zapatillas rosadas y calcetines granate sobre fondo oscuro, con el título en blanco.' }), mode: 'piece', surface: 'dark' },
     blocks: [
       {

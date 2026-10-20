@@ -1,0 +1,71 @@
+---
+/* Portada de proyecto: el campo de color del proyecto, su marca y sus ilustraciones,
+   compuestos por capas sobre la placa 4:3. Todas las capas salen de piezas reales
+   de src/assets/work/; los recortes viven en src/assets/portadas/.
+   Las capas van con alt vacío: la tarjeta ya nombra el proyecto en su texto. */
+import { Image } from 'astro:assets';
+import type { Portada } from '../data/projects';
+import { asset } from '../lib/assets';
+
+interface Props { portada: Portada; eager?: boolean }
+const { portada: c, eager = false } = Astro.props;
+
+/* Ancho de origen suficiente para 2× sin pedir más de lo que mide la pieza. */
+const ancho = (ref: string, pct: number) => Math.min(asset(ref).width, Math.round(12 * pct));
+const carga = eager ? 'eager' : 'lazy';
+const capa = (x: number, y: number, w: number, rot = 0, z = 1) =>
+  `left:${x}%;top:${y}%;width:${w}%;--rot:${rot}deg;z-index:${z}`;
+---
+<span class="pc" style={`--campo:${c.campo}`}>
+  {c.trama && (
+    <Image
+      class="pc__trama"
+      src={asset(c.trama)}
+      alt=""
+      width={Math.min(asset(c.trama).width, 1000)}
+      formats={['avif']}
+      fallbackFormat="webp"
+      loading={carga}
+    />
+  )}
+  {(c.piezas ?? []).map((p) => (
+    <Image
+      class="pc__capa"
+      src={asset(p.ref)}
+      alt=""
+      width={ancho(p.ref, p.w)}
+      formats={['avif']}
+      fallbackFormat="webp"
+      loading={carga}
+      style={capa(p.x, p.y, p.w, p.rot, p.z)}
+    />
+  ))}
+  <Image
+    class="pc__capa pc__marca"
+    src={asset(c.marca.ref)}
+    alt=""
+    width={ancho(c.marca.ref, c.marca.w)}
+    formats={['avif']}
+    fallbackFormat="webp"
+    loading={carga}
+    style={capa(c.marca.x, c.marca.y, c.marca.w, 0, 2)}
+  />
+</span>
+
+<style>
+  .pc {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--campo);
+    overflow: hidden;
+  }
+  .pc :global(img) { display: block; }
+  .pc__trama { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pc__capa {
+    position: absolute;
+    height: auto;
+    transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+  }
+</style>
