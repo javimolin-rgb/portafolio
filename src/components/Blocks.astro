@@ -2,8 +2,12 @@
 /* Biblioteca de bloques de un caso (DESIGN.md §8). Cada bloque declara su superficie. */
 import Figure from './Figure.astro';
 import ScaleRow from './ScaleRow.astro';
-import type { Block, Piece } from '../data/projects';
+import GlyphSheet from './GlyphSheet.astro';
+import Fondos from './Fondos.astro';
+import { headingOf, type Block, type Piece } from '../data/projects';
+import { bibliotecas } from '../data/bibliotecas';
 import { ratioOf } from '../lib/assets';
+import { slugify } from '../lib/slug';
 
 interface Props { blocks: Block[] }
 const { blocks } = Astro.props;
@@ -18,6 +22,8 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   const surface = surf(b);
   const cont = bi > 0 && surf(blocks[bi - 1]) === surface && blocks[bi - 1].kind !== 'bleed';
   const cls = `blk blk--${b.kind} s-${surface}${cont ? ' is-cont' : ''}`;
+  const h = headingOf(b);
+  const aid = h ? `s-${slugify(h)}` : `b${bi}`;
 
   if (b.kind === 'notes') return (
     <section class={cls} aria-label="Contexto y decisiones">
@@ -34,9 +40,9 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   );
 
   if (b.kind === 'swatches') return (
-    <section class={cls} aria-labelledby={`b${bi}`}>
+    <section class={cls} aria-labelledby={aid}>
       <div class="wrap sw__head">
-        <h2 id={`b${bi}`} class="h2">{b.heading}</h2>
+        <h2 id={aid} class="h2">{b.heading}</h2>
         {b.piece && <div class="sw__piece"><Figure piece={b.piece} sizes={sizesFor(0.4)} /></div>}
       </div>
       <ul class="sw__row">
@@ -65,9 +71,9 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
     const max = rowMax[b.size ?? 'm'];
     const gaps = (b.pieces.length - 1) * 32;
     return (
-      <section class={cls} aria-labelledby={b.heading ? `b${bi}` : undefined}>
+      <section class={cls} aria-labelledby={b.heading ? aid : undefined}>
         <div class="wrap">
-          {b.heading && <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>}
+          {b.heading && <h2 id={aid} class="h2 blk__h">{b.heading}</h2>}
           <ul class="jrow" style={`--rowmax:${Math.round(max * s + gaps)}px;--rowh:${max}px`} tabindex="0" aria-label={b.heading ?? 'Piezas'}>
             {b.pieces.map((p) => (
               <li class="jrow__item" style={`--ir:${ratio(p).toFixed(4)}`}>
@@ -82,9 +88,9 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   }
 
   if (b.kind === 'grid') return (
-    <section class={cls} aria-labelledby={b.heading ? `b${bi}` : undefined}>
+    <section class={cls} aria-labelledby={b.heading ? aid : undefined}>
       <div class="wrap">
-        {b.heading && <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>}
+        {b.heading && <h2 id={aid} class="h2 blk__h">{b.heading}</h2>}
         <ul class={`grid grid--${b.cols}`}>
           {b.pieces.map((p) => <li><Figure piece={p} sizes={sizesFor(1 / b.cols)} /></li>)}
         </ul>
@@ -94,9 +100,9 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   );
 
   if (b.kind === 'stack') return (
-    <section class={cls} aria-labelledby={b.heading ? `b${bi}` : undefined}>
+    <section class={cls} aria-labelledby={b.heading ? aid : undefined}>
       <div class="wrap">
-        {b.heading && <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>}
+        {b.heading && <h2 id={aid} class="h2 blk__h">{b.heading}</h2>}
         <ul class="stack">{b.pieces.map((p) => <li><Figure piece={p} sizes="(min-width: 1100px) 92vw, 100vw" /></li>)}</ul>
         {b.note && <p class="blk__note prose">{b.note}</p>}
       </div>
@@ -104,9 +110,9 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   );
 
   if (b.kind === 'scale') return (
-    <section class={cls} aria-labelledby={`b${bi}`}>
+    <section class={cls} aria-labelledby={aid}>
       <div class="wrap">
-        <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>
+        <h2 id={aid} class="h2 blk__h">{b.heading}</h2>
         <ScaleRow pieces={b.pieces.map((piece) => ({ piece }))} maxH={420} label={b.heading} />
         {b.note && <p class="blk__note prose">{b.note}</p>}
       </div>
@@ -114,9 +120,9 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   );
 
   if (b.kind === 'sequence') return (
-    <section class={cls} aria-labelledby={`b${bi}`}>
+    <section class={cls} aria-labelledby={aid}>
       <div class="wrap">
-        <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>
+        <h2 id={aid} class="h2 blk__h">{b.heading}</h2>
         <ol class="seq">
           {b.steps.map((st, i) => (
             <li class="seq__step">
@@ -146,7 +152,7 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   );
 
   if (b.kind === 'anatomy') return (
-    <section class={cls} aria-labelledby={`b${bi}`}>
+    <section class={cls} aria-labelledby={aid}>
       <div class="wrap anat">
         <div class="anat__fig">
           <Figure piece={b.piece} sizes={sizesFor(0.45)} caption={false} />
@@ -155,7 +161,7 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
           ))}
         </div>
         <div class="anat__legend">
-          <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>
+          <h2 id={aid} class="h2 blk__h">{b.heading}</h2>
           <ol>
             {b.zones.map((z, i) => (
               <li><i aria-hidden="true">{i + 1}</i><div><h3 class="h3">{z.title}</h3><p>{z.text}</p></div></li>
@@ -168,7 +174,7 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   );
 
   if (b.kind === 'markers') return (
-    <section class={cls} aria-labelledby={`b${bi}`}>
+    <section class={cls} aria-labelledby={aid}>
       <div class="wrap anat anat--photo">
         <div class="anat__fig">
           <Figure piece={b.piece} sizes={sizesFor(0.62)} caption={false} />
@@ -177,7 +183,7 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
           ))}
         </div>
         <div class="anat__legend">
-          <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>
+          <h2 id={aid} class="h2 blk__h">{b.heading}</h2>
           <ol>
             {b.points.map((pt, i) => (
               <li><i aria-hidden="true">{i + 1}</i><div><h3 class="h3">{pt.title}</h3><p>{pt.text}</p></div></li>
@@ -189,12 +195,48 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
     </section>
   );
 
+  if (b.kind === 'glyphs') {
+    const lib = bibliotecas[b.set];
+    const groups = b.groups ? lib.glifos.filter((g) => b.groups!.includes(g.id)) : lib.glifos;
+    const total = groups.reduce((n, g) => n + g.items.length, 0);
+    return (
+      <section class={cls} aria-labelledby={aid}>
+        <div class="wrap">
+          <div class="lib__head">
+            <h2 id={aid} class="h2 blk__h">{b.heading}</h2>
+            <p class="lib__n">{total} elementos</p>
+          </div>
+          {b.intro && <p class="lib__intro prose">{b.intro}</p>}
+          <GlyphSheet groups={groups} ink={lib.ink} paper={lib.paper} line={lib.line} />
+          {b.note && <p class="blk__note prose">{b.note}</p>}
+        </div>
+      </section>
+    );
+  }
+
+  if (b.kind === 'fondos') {
+    const lib = bibliotecas[b.set];
+    return (
+      <section class={cls} aria-labelledby={aid}>
+        <div class="wrap">
+          <div class="lib__head">
+            <h2 id={aid} class="h2 blk__h">{b.heading}</h2>
+            <p class="lib__n">{lib.fondos.length} fondos</p>
+          </div>
+          {b.intro && <p class="lib__intro prose">{b.intro}</p>}
+          <Fondos fondos={lib.fondos} dir={lib.dir} line={lib.line} />
+          {b.note && <p class="blk__note prose">{b.note}</p>}
+        </div>
+      </section>
+    );
+  }
+
   if (b.kind === 'pair') {
     const ra = ratio(b.a), rb = ratio(b.b), s = ra + rb;
     return (
-      <section class={cls} aria-labelledby={b.heading ? `b${bi}` : undefined}>
+      <section class={cls} aria-labelledby={b.heading ? aid : undefined}>
         <div class="wrap">
-          {b.heading && <h2 id={`b${bi}`} class="h2 blk__h">{b.heading}</h2>}
+          {b.heading && <h2 id={aid} class="h2 blk__h">{b.heading}</h2>}
           <div class="pair">
             <ul class="jrow jrow--pair" style={`--rowmax:${Math.round(620 * s + 24)}px;--rowh:620px`}>
               <li class="jrow__item" style={`--ir:${ra.toFixed(4)}`}><Figure piece={b.a} sizes={sizesFor(ra / s)} /></li>
@@ -224,7 +266,7 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   /* Paleta */
   .sw__head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--gap); align-items: end; margin-bottom: var(--s-6); }
   .sw__piece { max-width: 28rem; justify-self: end; width: 100%; }
-  .sw__row { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--s-2); margin-inline: var(--margin); }
+  .sw__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: var(--s-2); margin-inline: var(--margin); }
   .sw__row li { aspect-ratio: 3 / 4; padding: var(--s-3); display: flex; flex-direction: column; justify-content: flex-end; gap: 0; font-size: var(--t-small); }
   .sw__row b { font-weight: 560; }
 
@@ -274,6 +316,14 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
   .anat__legend ol { display: grid; gap: var(--s-5); }
   .anat__legend li { display: grid; grid-template-columns: 1.75rem 1fr; gap: var(--s-4); align-items: start; }
   .anat__legend p { margin-top: var(--s-1); color: var(--fg-2); }
+
+  /* Láminas de biblioteca */
+  .lib__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--s-2) var(--s-6); }
+  .lib__head .blk__h { margin-bottom: 0; }
+  .lib__n { font-size: var(--t-small); color: var(--fg-2); font-variant-numeric: tabular-nums; }
+  .lib__intro { margin-top: var(--s-4); color: var(--fg-2); }
+  .lib__intro + :global(.sheet), .lib__intro + :global(.fondos) { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
+  .lib__head + :global(.sheet), .lib__head + :global(.fondos) { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
 
   /* Par */
   .pair { display: grid; gap: var(--s-5); }

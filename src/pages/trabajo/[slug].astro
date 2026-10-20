@@ -3,7 +3,7 @@ import { getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Figure from '../../components/Figure.astro';
 import Blocks from '../../components/Blocks.astro';
-import { projects, type Project } from '../../data/projects';
+import { projects, sectionsOf, type Project } from '../../data/projects';
 import { asset, url } from '../../lib/assets';
 
 export function getStaticPaths() {
@@ -11,6 +11,8 @@ export function getStaticPaths() {
 }
 interface Props { project: Project; prev: Project; next: Project }
 const { project: p, prev, next } = Astro.props;
+
+const secciones = sectionsOf(p.blocks);
 
 const og = await getImage({ src: asset(p.cover.ref), width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 82 });
 ---
@@ -50,6 +52,17 @@ const og = await getImage({ src: asset(p.cover.ref), width: 1200, height: 630, f
           <Figure piece={p.hero.piece} eager sizes="(min-width: 1100px) 70vw, 100vw" />
         </div>
       </section>
+    )}
+
+    {secciones.length > 2 && (
+      <nav class="case__index wrap" aria-labelledby="indice">
+        <h2 id="indice" class="case__index-t small muted">En este proyecto</h2>
+        <ol class="case__index-l">
+          {secciones.map((sec, i) => (
+            <li><a href={`#${sec.id}`}><span class="case__index-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{sec.label}</a></li>
+          ))}
+        </ol>
+      </nav>
     )}
 
     <Blocks blocks={p.blocks} />
@@ -92,6 +105,18 @@ const og = await getImage({ src: asset(p.cover.ref), width: 1200, height: 630, f
   .case__plate { background: var(--plate); padding: clamp(1.5rem, 5vw, 5rem); }
   .case__plate :global(.fig) { max-width: min(100%, calc(70svh * var(--r))); margin-inline: auto; }
 
+  /* Índice del caso: todas las secciones a la vista antes de empezar a bajar. */
+  .case__index { padding-top: clamp(2.5rem, 5vw, 4rem); }
+  .case__index-t { padding-bottom: var(--s-3); border-bottom: 1px solid var(--rule); }
+  .case__index-l { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 var(--gap); }
+  .case__index-l a {
+    display: grid; grid-template-columns: 1.9rem 1fr; align-items: baseline; gap: var(--s-2);
+    padding-block: var(--s-3); border-bottom: 1px solid var(--rule);
+    text-decoration: none; font-size: 0.9375rem;
+  }
+  .case__index-l a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  .case__index-n { color: var(--fg-2); font-size: var(--t-small); font-variant-numeric: tabular-nums; }
+
   .case__credits { padding-top: var(--section); font-size: var(--t-small); }
   .case__credits .wrap { max-width: none; }
   .case__credits ul { margin-top: var(--s-3); display: grid; gap: var(--s-1); color: var(--fg-2); }
@@ -106,7 +131,13 @@ const og = await getImage({ src: asset(p.cover.ref), width: 1200, height: 630, f
     .pager__all { grid-column: 1 / -1; grid-row: 2; }
   }
 
+  @media (max-width: 999px) {
+    .case__index-l { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
   @media (max-width: 899px) {
     .case__intro { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 599px) {
+    .case__index-l { grid-template-columns: 1fr; }
   }
 </style>
