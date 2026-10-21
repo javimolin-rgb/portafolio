@@ -34,6 +34,8 @@ export type Block =
   | { kind: 'anatomy'; heading?: string; piece: Piece; zones: { x: number; y: number; w: number; h: number; title: string; text: string }[]; surface?: Surface; note?: string }
   | { kind: 'markers'; heading?: string; piece: Piece; points: { x: number; y: number; title: string; text: string }[]; surface?: Surface }
   | { kind: 'pair'; heading?: string; a: Piece; b: Piece; text?: string; surface?: Surface }
+  /** Herramienta hecha para el cliente: qué resuelve y qué entrega, sin mostrar el código. */
+  | { kind: 'herramienta'; heading: string; text: string[]; lista?: string[]; enlace?: { href: string; label: string }; nota?: string; surface?: Surface }
   /** Lámina de vectores de una biblioteca de marca (ver src/data/biblioteca-*.ts). */
   | { kind: 'glyphs'; heading: string; set: BibliotecaId; groups?: string[]; intro?: string; note?: string; surface?: Surface }
   /** Lámina de contactos de fondos de pantalla de una biblioteca de marca. */
@@ -238,13 +240,22 @@ export const projects: Project[] = [
           p('muralia/historia_05', 'Panel de lana mineral', 'Historia 9:16'),
           p('muralia/historia_08', 'Panel para ductos', 'Historia 9:16'),
         ],
-        note: 'El catálogo se ordena en tres líneas (Confort, Seguridad y Estructura), cada una con una entrada animada. Cada producto lleva sus espesores, dónde se usa y un botón para cotizar.',
+        note: 'El catálogo se ordena en tres líneas (Confort, Seguridad y Estructura), cada una con una entrada animada. Cada producto lleva sus espesores, dónde se usa y un botón para cotizar. Las cuatro historias de arriba son de la línea Confort.',
       },
       {
         kind: 'stack',
         heading: 'Sitio web',
         pieces: [p('muralia/sitio_web', 'muralia.cl', 'Portada, escritorio')],
         note: 'El sitio usa la misma biblioteca: franjas de aparejo en las cabeceras, iconos en las tres líneas de producto y la cartela de plano en los datos de contacto.',
+      },
+      {
+        kind: 'herramienta',
+        heading: 'Cotizador',
+        text: [
+          'Dentro del mismo sitio hice un cotizador: una página donde Muralia arma la cotización de una obra y la descarga, con la identidad de la marca ya aplicada.',
+          'Es la última pieza del sistema. La marca no termina en el logo y los carruseles: también está en el documento que el cliente recibe y guarda.',
+        ],
+        enlace: { href: 'https://muralia.cl/generador.html', label: 'Abrir el cotizador' },
       },
     ],
     credits: ['Fotos de producto: material de los fabricantes.'],
@@ -344,6 +355,23 @@ export const projects: Project[] = [
           p('neorigen/p2_10_cierre', 'Cierre', 'Carrusel 1:1'),
         ],
         note: 'Un carrusel para comparar los modelos uno por uno y terminar en una conversación por mensaje directo.',
+      },
+      {
+        kind: 'herramienta',
+        heading: 'Cotizador',
+        text: [
+          'Cada cotización se armaba a mano y salía distinta. Hice una página donde el vendedor carga los datos y descarga la cotización ya diagramada con el manual de marca: azul Origen, Fraunces para los títulos, Work Sans para el texto e IBM Plex Mono para las cifras.',
+          'Funciona entera en el navegador, sin servidor ni programas que instalar.',
+        ],
+        lista: [
+          'Dos formas de cargar los datos: subir una planilla o escribirlos en un formulario.',
+          'Un menú con los modelos de la marca, y la opción de escribir uno nuevo.',
+          'Varias casas en la misma cotización, cada una con sus metros y su distribución.',
+          'Los totales en UF se calculan solos desde los m² y el valor UF/m², y se pueden sobrescribir.',
+          'Sale un PDF de una sola página: cliente y proyecto, un bloque por casa, condiciones generales y contacto.',
+          'Incluye una planilla en blanco descargable, lista para rellenar.',
+        ],
+        nota: 'La marca no termina en el logo: también está en el documento que el cliente recibe.',
       },
     ],
     credits: ['Fotos de obra y renders: Neorigen. Logotipo existente de la marca.'],

@@ -139,6 +139,24 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
     </section>
   );
 
+  if (b.kind === 'herramienta') return (
+    <section class={cls} aria-labelledby={aid}>
+      <div class="wrap tool">
+        <div class="tool__text prose">
+          <h2 id={aid} class="h2">{b.heading}</h2>
+          {b.text.map((t) => <p class="lead-ish">{t}</p>)}
+          {b.enlace && <p class="tool__cta"><a class="btn btn--ghost" href={b.enlace.href} rel="noopener">{b.enlace.label}</a></p>}
+        </div>
+        {b.lista && (
+          <ul class="tool__list">
+            {b.lista.map((l) => <li>{l}</li>)}
+          </ul>
+        )}
+      </div>
+      {b.nota && <p class="wrap note">{b.nota}</p>}
+    </section>
+  );
+
   if (b.kind === 'statement') return (
     <section class={cls}>
       <div class="wrap stm">
@@ -257,6 +275,14 @@ const sizesFor = (share: number) => `(min-width: 1100px) ${Math.max(18, Math.rou
 
   /* Notas */
   .notes { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7) var(--gap); }
+  .tool { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7) var(--gap); align-items: start; }
+  .tool__text { max-width: 46ch; }
+  .tool__text .h2 { margin-bottom: var(--s-4); }
+  .tool__text p + p { margin-top: var(--s-4); }
+  .tool__cta { margin-top: var(--s-5); }
+  .tool__list { border-top: 1px solid var(--rule); }
+  .tool__list li { padding-block: var(--s-4); border-bottom: 1px solid var(--rule); max-width: 52ch; }
+  @media (max-width: 899px) { .tool { grid-template-columns: 1fr; } }
   .lead-ish { font-size: var(--t-lead); line-height: 1.45; }
   .notes__ctx { max-width: 40ch; }
   .notes__dec .h3 { color: var(--fg-2); font-weight: 500; font-size: var(--t-small); letter-spacing: 0; font-stretch: 100%; }

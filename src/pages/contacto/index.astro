@@ -3,15 +3,17 @@ import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import { url } from '../../lib/assets';
 
+/* `value` va partido en los puntos donde el dato puede cortar sin quedar mal:
+   después de la arroba y de la barra. Entre esas partes se inserta un <wbr>. */
 const vias = [
-  { icon: 'mail', label: 'Correo', value: 'javimolin@gmail.com', href: 'mailto:javimolin@gmail.com', action: 'Escribir un correo' },
-  { icon: 'linkedin', label: 'LinkedIn', value: 'linkedin.com/in/javimolin', href: 'https://www.linkedin.com/in/javimolin/', action: 'Abrir LinkedIn' },
-  { icon: 'download', label: 'Currículum', value: 'CV en PDF', href: url('cv/CV-Javi-Molin.pdf'), action: 'Descargar CV', download: true },
+  { icon: 'mail', label: 'Correo', value: ['javimolin@', 'gmail.com'], href: 'mailto:javimolin@gmail.com', action: 'Escribir un correo' },
+  { icon: 'linkedin', label: 'LinkedIn', value: ['linkedin.com/', 'in/javimolin'], href: 'https://www.linkedin.com/in/javimolin/', action: 'Abrir LinkedIn' },
+  { icon: 'download', label: 'Currículum', value: ['CV en PDF'], href: url('cv/CV-Javi-Molin.pdf'), action: 'Descargar CV', download: true },
 ] as const;
 ---
 <Base
   title="Contacto — Javi Molin"
-  description="Contacto de María Javiera Molin, Diseñadora Integral UC: correo, LinkedIn, teléfono y CV."
+  description="Contacto de María Javiera Molin Aguad, Diseñadora Integral UC: correo, LinkedIn, teléfono y CV."
   current="contacto"
 >
   <header class="page-head">
@@ -25,7 +27,7 @@ const vias = [
         <li class="way">
           <span class="way__icon"><Icon name={v.icon} size={22} /></span>
           <p class="way__label">{v.label}</p>
-          <p class="way__value">{v.value}</p>
+          <p class="way__value">{v.value.map((parte, i) => <>{parte}{i < v.value.length - 1 && <wbr />}</>)}</p>
           <a class="btn btn--ghost" href={v.href} download={'download' in v ? true : undefined} rel={v.icon === 'linkedin' ? 'me' : undefined}>{v.action}</a>
         </li>
       ))}
@@ -36,11 +38,18 @@ const vias = [
 
 <style>
   .ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
-  .way { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); padding: var(--s-6); background: var(--plate); }
+  .way { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); padding: clamp(1.25rem, 2.4vw, 2rem); background: var(--plate); }
   .way__icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--paper); margin-bottom: var(--s-2); }
   .way__label { font-size: var(--t-small); color: var(--fg-2); }
-  .way__value { font-family: var(--display); font-weight: var(--display-w); letter-spacing: -0.01em; font-size: 1.5rem; line-height: 1.15; overflow-wrap: anywhere; margin-bottom: var(--s-3); }
+  .way__value {
+    font-family: var(--display); font-weight: var(--display-w); letter-spacing: -0.01em;
+    font-size: clamp(1.25rem, 1.05rem + 0.55vw, 1.5rem); line-height: 1.15;
+    /* Solo corta en los <wbr>; nunca a mitad de palabra. */
+    overflow-wrap: break-word; hyphens: none;
+    margin-bottom: var(--s-3);
+  }
   .way .btn { margin-top: auto; }
   .phone { margin-top: var(--s-6); color: var(--fg-2); }
-  @media (max-width: 899px) { .ways { grid-template-columns: 1fr; } }
+  @media (max-width: 1099px) { .ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 719px) { .ways { grid-template-columns: 1fr; } }
 </style>

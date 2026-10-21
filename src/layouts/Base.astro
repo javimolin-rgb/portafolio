@@ -27,8 +27,8 @@ const nav = [
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'María Javiera Molin',
-  alternateName: ['Javi Molin', 'Javiera Molin'],
+  name: 'María Javiera Molin Aguad',
+  alternateName: ['María Javiera Molin', 'Javi Molin', 'Javiera Molin'],
   jobTitle: 'Diseñadora Integral',
   alumniOf: 'Pontificia Universidad Católica de Chile',
   address: { '@type': 'PostalAddress', addressLocality: 'Santiago', addressCountry: 'CL' },
@@ -58,7 +58,7 @@ const person = {
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={og} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="author" content="María Javiera Molin" />
+    <meta name="author" content="María Javiera Molin Aguad" />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
   </head>
   <body>
@@ -74,16 +74,18 @@ const person = {
           </button>
         </div>
         <div class="side__panel" id="side-panel">
-          <Picture
-            class="side__photo"
-            src={retrato}
-            alt="Retrato de Javi Molin"
-            widths={[160, 320]}
-            sizes="140px"
-            formats={['avif']}
-            fallbackFormat="webp"
-          />
-          <p class="side__bio">Diseñadora Integral UC. Branding, campañas y piezas que funcionan en todos los formatos.</p>
+          <span class="side__portrait">
+            <Picture
+              class="side__photo"
+              src={retrato}
+              alt="Retrato de Javi Molin"
+              widths={[200, 400]}
+              sizes="140px"
+              formats={['avif']}
+              fallbackFormat="webp"
+            />
+          </span>
+          <p class="side__bio">Diseñadora Integral UC, con foco en Diseño Gráfico y Branding. Más de 4 años en campañas, eventos y gran formato.</p>
           <nav class="side__nav" aria-label="Principal">
             <ul>
               {nav.map((n) => (
@@ -108,7 +110,7 @@ const person = {
           <slot />
         </main>
         <footer class="foot">
-          <p>María Javiera Molin, Diseñadora Integral UC. Santiago, Chile.</p>
+          <p>María Javiera Molin Aguad, Diseñadora Integral UC. Santiago, Chile.</p>
           <p>Las fotos de modelos y producto son material de las marcas; el diseño, la composición y los originales son míos, salvo donde se indica otra autoría.</p>
         </footer>
       </div>
@@ -150,7 +152,9 @@ const person = {
   .side__toggle-close { display: none; }
 
   .side__panel { display: flex; flex-direction: column; flex: 1; }
-  :global(.side__photo) { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-top: var(--s-6); }
+  :global(.side__portrait) { display: block; width: 140px; height: 140px; border-radius: 50%; overflow: hidden; margin-top: var(--s-6); }
+  /* La foto se amplía dentro del círculo: encuadrada al centro deja ver la pared clara en el borde. */
+  :global(.side__photo) { width: 100%; height: 100%; object-fit: cover; object-position: 55% 33%; transform: scale(1.42); }
   .side__bio { margin-top: var(--s-5); font-size: 0.875rem; line-height: 1.55; color: var(--side-fg-2); max-width: 26ch; }
 
   .side__nav { margin-top: var(--s-6); padding-top: var(--s-4); border-top: 1px solid var(--side-rule); }
