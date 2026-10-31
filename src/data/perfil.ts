@@ -1,7 +1,28 @@
 /* Datos de perfil: experiencia, formación y herramientas. Fuente: CV de Javi. */
 
-export const experiencia = [
-  { periodo: '2025', cargo: 'Diseñadora de Marketing', lugar: 'Ripley', detalle: 'Campañas digitales y presenciales en Chile y Perú: Ripley Beauty, Día del Niño, Navidad, CyberDay, Días R, eventos y activaciones.' },
+export type Trabajo = {
+  periodo: string;
+  cargo: string;
+  lugar: string;
+  detalle: string;
+  /** Puntos del CV. Hoy solo Ripley los tiene; se listan bajo el detalle en Experiencia. */
+  logros?: string[];
+};
+
+export const experiencia: Trabajo[] = [
+  {
+    periodo: '2025',
+    cargo: 'Diseñadora de Marketing',
+    lugar: 'Ripley',
+    detalle: 'Campañas digitales y presenciales en Chile y Perú: Ripley Beauty, Día del Niño, Navidad, CyberDay, Días R, eventos y activaciones.',
+    logros: [
+      'Diseñé, planifiqué y ejecuté campañas digitales y offline en Chile y Perú, en hitos institucionales y comerciales.',
+      'Hice piezas gráficas y audiovisuales para eventos corporativos y promocionales (módulos, floorgraphics, merchandising) y material impreso.',
+      'Adapté contenidos a redes sociales, e-commerce y tiendas, cuidando la consistencia visual en cada punto de contacto.',
+      'Participé en procesos creativos con los equipos de Marketing, Contenidos y Comercial.',
+      'Hice seguimiento de métricas de desempeño para optimizar resultados y cuidar la calidad de cada campaña.',
+    ],
+  },
   { periodo: '2022 a hoy', cargo: 'Diseñadora independiente', lugar: 'Freelance', detalle: 'Branding, redes sociales y material gráfico para clientes de distintas industrias. Hoy: identidad, manual de marca, redes y sitio web para Muralia y Neorigen.' },
   { periodo: '2022 a 2023', cargo: 'Diseñadora principal', lugar: 'Agencia Lupa BTL', detalle: 'Propuestas de diseño para clientes de capital humano, espacios y vestuario para eventos corporativos, y redes sociales de la agencia.' },
   { periodo: '2022 a 2023', cargo: 'Diseñadora complementaria', lugar: 'Fundación Banco de Ropa', detalle: 'Propuestas para un uso más eficiente de los recursos de la fundación.' },

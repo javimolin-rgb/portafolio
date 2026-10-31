@@ -27,8 +27,8 @@ const nav = [
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'María Javiera Molin',
-  alternateName: ['Javi Molin', 'Javiera Molin'],
+  name: 'María Javiera Molin Aguad',
+  alternateName: ['Javi Molin', 'Javiera Molin', 'María Javiera Molin'],
   jobTitle: 'Diseñadora Integral',
   alumniOf: 'Pontificia Universidad Católica de Chile',
   address: { '@type': 'PostalAddress', addressLocality: 'Santiago', addressCountry: 'CL' },
@@ -58,7 +58,7 @@ const person = {
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={og} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="author" content="María Javiera Molin" />
+    <meta name="author" content="María Javiera Molin Aguad" />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
   </head>
   <body>
@@ -108,7 +108,7 @@ const person = {
           <slot />
         </main>
         <footer class="foot">
-          <p>María Javiera Molin, Diseñadora Integral UC. Santiago, Chile.</p>
+          <p>María Javiera Molin Aguad, Diseñadora Integral UC. Santiago, Chile.</p>
           <p>Las fotos de modelos y producto son material de las marcas; el diseño, la composición y los originales son míos, salvo donde se indica otra autoría.</p>
         </footer>
       </div>
@@ -135,53 +135,82 @@ const person = {
 </html>
 
 <style>
-  .shell { display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr); min-height: 100vh; }
+  .shell { min-height: 100vh; }
 
+  /* Escritorio: la barra queda fija a la izquierda y el contenido corre a su derecha.
+     Todo el bloque de perfil se centra vertical y horizontalmente en la columna. */
   .side {
-    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    position: fixed; top: 0; left: 0; z-index: 30;
+    width: var(--side-w); height: 100vh; height: 100dvh; overflow-y: auto;
     background: var(--side-bg); color: var(--side-fg);
     padding: var(--s-6) var(--s-5);
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
   }
   .side :focus-visible { outline-color: var(--side-fg); }
-  .side__top { display: flex; justify-content: space-between; align-items: center; }
+  .side__top { width: 100%; display: flex; justify-content: center; align-items: center; }
   .side__name { font-family: var(--display); font-weight: var(--display-w); letter-spacing: -0.01em; font-size: 1.75rem; line-height: 1; text-decoration: none; }
   .side__toggle { display: none; width: 44px; height: 44px; place-items: center; color: var(--side-fg); }
   .side__toggle-close { display: none; }
 
-  .side__panel { display: flex; flex-direction: column; flex: 1; }
+  .side__panel { width: 100%; display: flex; flex-direction: column; align-items: center; }
   :global(.side__photo) { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-top: var(--s-6); }
-  .side__bio { margin-top: var(--s-5); font-size: 0.875rem; line-height: 1.55; color: var(--side-fg-2); max-width: 26ch; }
+  .side__bio { margin-top: var(--s-5); font-size: var(--t-ui); line-height: 1.55; color: var(--side-fg-2); max-width: 26ch; }
 
-  .side__nav { margin-top: var(--s-6); padding-top: var(--s-4); border-top: 1px solid var(--side-rule); }
+  .side__nav { width: 100%; margin-top: var(--s-6); padding-top: var(--s-4); border-top: 1px solid var(--side-rule); }
   .side__nav a {
-    display: flex; align-items: center; gap: var(--s-3);
-    min-height: 44px; padding-inline: var(--s-3); margin-inline: calc(var(--s-3) * -1);
+    display: flex; align-items: center; justify-content: center; gap: var(--s-3);
+    min-height: 44px; padding-inline: var(--s-3);
     border-radius: 6px; text-decoration: none; color: var(--side-fg-2);
     transition: background-color 160ms ease, color 160ms ease;
   }
   .side__nav a:hover { color: var(--side-fg); background: rgb(255 255 255 / 0.06); }
   .side__nav a[aria-current='page'] { color: var(--side-fg); background: rgb(255 255 255 / 0.1); }
 
-  .side__actions { display: grid; gap: var(--s-2); margin-top: auto; padding-top: var(--s-6); }
-  .side__in { display: inline-flex; align-items: center; gap: var(--s-2); margin-top: var(--s-4); font-size: 0.875rem; color: var(--side-fg-2); text-decoration: none; }
+  .side__actions { width: 100%; display: grid; gap: var(--s-2); margin-top: var(--s-6); padding-top: var(--s-6); border-top: 1px solid var(--side-rule); }
+  .side__in { display: inline-flex; align-items: center; gap: var(--s-2); margin-top: var(--s-4); font-size: var(--t-ui); color: var(--side-fg-2); text-decoration: none; }
   .side__in:hover { color: var(--side-fg); }
 
-  .page { min-width: 0; display: flex; flex-direction: column; }
+  .page { margin-left: var(--side-w); min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
   main { flex: 1; }
   .foot { margin-top: var(--section); padding: var(--s-6) var(--margin); border-top: 1px solid var(--rule); font-size: var(--t-small); color: var(--fg-2); display: grid; gap: var(--s-1); }
   .foot p { max-width: 80ch; }
 
+  /* Ventanas bajas (portátiles de 13\"): se comprime la foto y los espacios para que
+     los botones de abajo no queden fuera de la pantalla. */
+  @media (min-width: 1000px) and (max-height: 760px) {
+    .side { padding-block: var(--s-5); justify-content: flex-start; }
+    .side__name { font-size: 1.5rem; }
+    :global(.side__photo) { width: 96px; height: 96px; margin-top: var(--s-4); }
+    .side__bio { margin-top: var(--s-3); }
+    .side__nav { margin-top: var(--s-4); padding-top: var(--s-3); }
+    .side__actions { margin-top: var(--s-4); padding-top: var(--s-4); }
+    .side__in { margin-top: var(--s-3); }
+  }
+
+  /* Más bajo todavía: la bio sobra antes que la navegación. */
+  @media (min-width: 1000px) and (max-height: 620px) {
+    .side__bio { display: none; }
+  }
+
+  /* Móvil y tablet: la barra vuelve a ser cabecera con menú, alineada a la izquierda. */
   @media (max-width: 999px) {
-    .shell { grid-template-columns: 1fr; }
-    .side { position: sticky; top: 0; z-index: 30; height: auto; max-height: 100vh; padding: var(--s-3) var(--margin); }
+    .side {
+      position: sticky; top: 0; left: auto;
+      width: auto; height: auto; max-height: 100vh;
+      padding: var(--s-3) var(--margin);
+      justify-content: flex-start; align-items: stretch; text-align: left;
+    }
+    .side__top { justify-content: space-between; }
     .side__toggle { display: grid; }
-    .side__panel { display: none; padding-bottom: var(--s-6); }
+    .side__panel { display: none; align-items: stretch; padding-bottom: var(--s-6); }
     .side.is-open .side__panel { display: flex; }
     .side.is-open .side__toggle-open { display: none; }
     .side.is-open .side__toggle-close { display: block; }
     .side__name { font-size: 1.5rem; }
     :global(.side__photo) { width: 96px; height: 96px; margin-top: var(--s-5); }
+    .side__nav a { justify-content: flex-start; margin-inline: calc(var(--s-3) * -1); }
     .side__actions { margin-top: var(--s-5); }
+    .page { margin-left: 0; min-height: 0; }
   }
 </style>

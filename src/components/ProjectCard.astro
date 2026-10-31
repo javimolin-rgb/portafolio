@@ -25,7 +25,7 @@ const { project: p } = Astro.props;
   .card__plate :global(svg) { width: 100%; height: 100%; transition: transform 600ms var(--ease-out); }
   /* El nombre del proyecto lo pone la lámina; abajo solo queda el pie: tipo de trabajo y cliente. */
   .card__body { display: grid; gap: 0.125rem; padding-top: var(--s-4); }
-  .card__kind { font-size: 0.9375rem; }
+  .card__kind { font-size: var(--t-ui); }
   .card__meta { font-size: var(--t-small); color: var(--fg-2); }
   @media (hover: hover) and (pointer: fine) {
     .card:hover .card__plate :global(svg) { transform: scale(1.02); }

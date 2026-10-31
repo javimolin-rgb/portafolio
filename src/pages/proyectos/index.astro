@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { projects } from '../../data/projects';
+import { byGrupo, grupos } from '../../data/projects';
 
 /* Filtros por tipo de trabajo, derivados del tipo de cada proyecto. */
 const groups: Record<string, string[]> = {
@@ -25,41 +25,62 @@ const filters = [
   { key: 'lanzamientos', label: 'Lanzamientos' },
   { key: 'identidad', label: 'Marca e identidad' },
 ];
+
+/* Los dos cuerpos de trabajo, Ripley primero. */
+const secciones = grupos.map((g) => ({ ...g, items: byGrupo(g.id) }));
 ---
 <Base
   title="Proyectos — Javi Molin"
-  description="Doce proyectos de Javi Molin: identidad, redes y sitio web para Muralia y Neorigen, y eventos, campañas y lanzamientos para Ripley."
+  description="Doce proyectos de María Javiera Molin Aguad: diez de Ripley como Diseñadora de Marketing y dos freelance, con identidad, redes y sitio web para Muralia y Neorigen."
   current="proyectos"
 >
   <header class="page-head">
     <h1 class="page-head__title display">Proyectos</h1>
-    <p class="page-head__lead lead">Doce proyectos de 2025 y 2026. Elige un tipo de trabajo o abre cualquier proyecto para ver el proceso, los formatos y las decisiones.</p>
+    <p class="page-head__lead lead">Doce proyectos de 2025 y 2026, agrupados por cliente. Elige un tipo de trabajo o abre cualquier proyecto para ver el proceso, los formatos y las decisiones.</p>
   </header>
 
-  <section class="sec work">
+  <section class="sec work" aria-label="Proyectos">
     <div class="filters" role="group" aria-label="Filtrar proyectos" data-filters hidden>
       {filters.map((f, i) => (
         <button type="button" class="filter" data-filter={f.key} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
       ))}
     </div>
     <p class="sr-only" aria-live="polite" data-count></p>
-    <ul class="cards" data-cards>
-      {projects.map((p) => (
-        <li data-groups={(groups[p.category] ?? []).join(' ')}><ProjectCard project={p} /></li>
-      ))}
-    </ul>
+
+    {secciones.map((g) => (
+      <section class="group" id={g.id} data-group aria-labelledby={`g-${g.id}`}>
+        <div class="group__head">
+          <h2 id={`g-${g.id}`} class="h2 group__title">{g.titulo}</h2>
+          <p class="group__meta small muted">
+            <span>{g.bajada}</span>
+            <span class="group__n" data-group-count>{g.items.length} proyectos</span>
+          </p>
+        </div>
+        <ul class="cards" data-cards>
+          {g.items.map((p) => (
+            <li data-groups={(groups[p.category] ?? []).join(' ')}><ProjectCard project={p} /></li>
+          ))}
+        </ul>
+      </section>
+    ))}
   </section>
 </Base>
 
 <style>
   .work { padding-top: var(--s-7); }
-  .filters { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-6); }
+  .filters { display: flex; flex-wrap: wrap; gap: var(--s-2); }
   .filter {
     min-height: 40px; padding: 0 1rem; border-radius: 6px; border: 1px solid #cfcfca;
-    font-size: 0.875rem; color: var(--fg-2); transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+    font-size: var(--t-ui); color: var(--fg-2); transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
   }
   .filter:hover { border-color: var(--ink); color: var(--fg); }
   .filter[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* Cada cliente abre con un filete y su bajada; dentro, la misma grilla de tarjetas. */
+  .group { margin-top: var(--s-8); padding-top: var(--s-5); border-top: 1px solid var(--rule); scroll-margin-top: var(--s-6); }
+  .group[hidden] { display: none; }
+  .group__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--s-2) var(--s-6); margin-bottom: var(--s-6); }
+  .group__meta { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
   .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--gap); }
   .cards li[hidden] { display: none; }
   @media (max-width: 799px) { .cards { grid-template-columns: 1fr; } }
@@ -67,21 +88,35 @@ const filters = [
 
 <script>
   const bar = document.querySelector<HTMLElement>('[data-filters]');
-  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-cards] > li'));
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-group]'));
   const count = document.querySelector<HTMLElement>('[data-count]');
-  if (bar) {
+  if (bar && sections.length) {
     bar.hidden = false;
     const btns = Array.from(bar.querySelectorAll<HTMLButtonElement>('[data-filter]'));
-    btns.forEach((b) => b.addEventListener('click', () => {
-      const key = b.dataset.filter!;
-      btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      let n = 0;
-      items.forEach((li) => {
-        const show = key === 'todos' || li.dataset.groups!.split(' ').includes(key);
-        li.hidden = !show;
-        if (show) n++;
+    const plural = (n: number) => `${n} ${n === 1 ? 'proyecto' : 'proyectos'}`;
+
+    const apply = (key: string) => {
+      let total = 0;
+      sections.forEach((sec) => {
+        const items = Array.from(sec.querySelectorAll<HTMLElement>('[data-cards] > li'));
+        let n = 0;
+        items.forEach((li) => {
+          const show = key === 'todos' || li.dataset.groups!.split(' ').includes(key);
+          li.hidden = !show;
+          if (show) n++;
+        });
+        // Un grupo sin resultados se esconde entero, con su título.
+        sec.hidden = n === 0;
+        const label = sec.querySelector<HTMLElement>('[data-group-count]');
+        if (label) label.textContent = plural(n);
+        total += n;
       });
-      if (count) count.textContent = `${n} proyectos`;
+      if (count) count.textContent = plural(total);
+    };
+
+    btns.forEach((b) => b.addEventListener('click', () => {
+      btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      apply(b.dataset.filter!);
     }));
   }
 </script>

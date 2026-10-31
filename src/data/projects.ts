@@ -42,9 +42,19 @@ export type Block =
 /** Bibliotecas gráficas disponibles. Cada una vive en su propio módulo de datos. */
 export type BibliotecaId = 'muralia';
 
+/** Los dos cuerpos de trabajo del portafolio. Ripley va primero en todas partes. */
+export type Grupo = 'ripley' | 'freelance';
+
+export const grupos: { id: Grupo; titulo: string; bajada: string }[] = [
+  { id: 'ripley', titulo: 'Ripley', bajada: 'Diseñadora de Marketing, 2025' },
+  { id: 'freelance', titulo: 'Freelance', bajada: 'Clientes actuales, 2026' },
+];
+
 export type Project = {
   slug: string;
   title: string;
+  /** Cliente al que pertenece el proyecto. Ordena el índice y la portada. */
+  grupo: Grupo;
   /** Tipo de proyecto, tal como se describe en el resumen. */
   category: string;
   /** Título partido en líneas para el índice y el caso. */
@@ -83,10 +93,11 @@ export const sectionsOf = (blocks: Block[]) =>
 
 export const stretchFor = (ratio: number) => Math.round(Math.min(150, Math.max(50, 100 + 60 * Math.log2(ratio))));
 
-export const projects: Project[] = [
+const catalogo: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'muralia',
+    grupo: 'freelance',
     title: 'Muralia',
     category: 'Identidad, redes y sitio web',
     client: 'Muralia',
@@ -230,6 +241,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'neorigen',
+    grupo: 'freelance',
     title: 'Neorigen',
     category: 'Marca, redes y sitio web',
     client: 'Neorigen',
@@ -325,6 +337,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'dia-del-nino',
+    grupo: 'ripley',
     title: 'Día del Niño',
     category: 'Evento en tienda',
     lines: ['Día del', 'Niño'],
@@ -448,6 +461,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'campeones-sin-limites',
+    grupo: 'ripley',
     title: 'Campeones Sin Límites',
     category: 'Evento deportivo y campaña',
     lines: ['Campeones', 'Sin Límites'],
@@ -577,6 +591,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'toys-r-us',
+    grupo: 'ripley',
     title: 'Toys"R"Us llega a Ripley',
     category: 'Lanzamiento',
     lines: ['Toys"R"Us', 'llega a Ripley'],
@@ -706,6 +721,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'new-romantic',
+    grupo: 'ripley',
     title: 'New Romantic y moda',
     category: 'Campaña de temporada',
     lines: ['New Romantic', 'y moda'],
@@ -793,6 +809,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'ventas-privadas',
+    grupo: 'ripley',
     title: 'Ventas Privadas y Days',
     category: 'Sistema de piezas',
     lines: ['Ventas', 'Privadas', 'y Days'],
@@ -890,6 +907,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'me-fascinan-las-sandalias',
+    grupo: 'ripley',
     title: 'Me fascinan las sandalias',
     category: 'Video para pantallas',
     lines: ['Me fascinan', 'las sandalias'],
@@ -928,6 +946,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'ripley-beauty',
+    grupo: 'ripley',
     title: 'Ripley Beauty',
     category: 'Inauguración y eventos',
     lines: ['Ripley', 'Beauty'],
@@ -1022,6 +1041,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'gamer-week',
+    grupo: 'ripley',
     title: 'Gamer Week',
     category: 'Propuesta de identidad',
     lines: ['Gamer', 'Week'],
@@ -1063,6 +1083,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'fiestas-patrias',
+    grupo: 'ripley',
     title: 'Fiestas Patrias y gift cards',
     category: 'Piezas de temporada',
     lines: ['Fiestas Patrias', 'y gift cards'],
@@ -1124,6 +1145,7 @@ export const projects: Project[] = [
   /* ------------------------------------------------------------------ */
   {
     slug: 'activaciones',
+    grupo: 'ripley',
     title: 'Activaciones en tienda',
     category: 'Activaciones con marcas',
     lines: ['Activaciones', 'en tienda'],
@@ -1230,3 +1252,10 @@ export const scaleBand: { piece: Piece; project: string }[] = [
   { piece: p('ventas-privadas/s_vp_02', 'Gift card', '20 × 15 cm', { cm: [20, 15] }), project: 'ventas-privadas' },
   { piece: p('toys-r-us/s_tru_03', 'Sticker', 'Ø 12 cm', { cm: [12, 12], round: true }), project: 'toys-r-us' },
 ];
+
+/** Orden del sitio: primero los diez proyectos de Ripley, después los dos freelance.
+    Es estable, así que dentro de cada grupo se mantiene el orden de arriba. */
+export const projects: Project[] = grupos.flatMap((g) => catalogo.filter((p) => p.grupo === g.id));
+
+/** Proyectos de un grupo, en el orden del sitio. */
+export const byGrupo = (id: Grupo) => projects.filter((p) => p.grupo === id);

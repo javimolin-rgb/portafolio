@@ -13,7 +13,7 @@ const ficha = [
 ---
 <Base
   title="Experiencia — Javi Molin"
-  description="Experiencia, formación y herramientas de María Javiera Molin, Diseñadora Integral UC: Ripley, Agencia Lupa BTL, Fundación Banco de Ropa y trabajo freelance."
+  description="Experiencia, formación y herramientas de María Javiera Molin Aguad, Diseñadora Integral UC: Ripley, Agencia Lupa BTL, Fundación Banco de Ropa y trabajo freelance."
   current="experiencia"
 >
   <header class="page-head">
@@ -46,6 +46,11 @@ const ficha = [
             <h3 class="h3">{e.cargo}</h3>
             <p class="cv__where">{e.lugar}</p>
             <p class="cv__what">{e.detalle}</p>
+            {e.logros && (
+              <ul class="cv__logros">
+                {e.logros.map((l) => <li>{l}</li>)}
+              </ul>
+            )}
           </div>
         </li>
       ))}
@@ -89,15 +94,20 @@ const ficha = [
   .bio__ficha dt { color: var(--fg-2); }
   .sec__title { margin-bottom: var(--s-5); }
   .cv { border-top: 1px solid var(--rule); }
-  .cv li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: var(--gap); padding-block: var(--s-5); border-bottom: 1px solid var(--rule); }
+  /* Solo los hijos directos: los li de la lista de logros no son filas de la grilla. */
+  .cv > li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: var(--gap); padding-block: var(--s-5); border-bottom: 1px solid var(--rule); }
   .cv__when { color: var(--fg-2); }
   .cv__where { margin-top: var(--s-1); }
   .cv__what { margin-top: var(--s-2); max-width: 60ch; color: var(--fg-2); }
+  /* Los puntos del CV: un filete corto en vez de viñeta, para no romper la grilla. */
+  .cv__logros { margin-top: var(--s-4); display: grid; gap: var(--s-2); max-width: 60ch; }
+  .cv__logros li { position: relative; padding-left: var(--s-5); font-size: var(--t-ui); line-height: 1.55; }
+  .cv__logros li::before { content: ''; position: absolute; left: 0; top: 0.75em; width: var(--s-3); height: 1px; background: #cfcfca; }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-7) var(--gap); }
   .tags { display: flex; flex-wrap: wrap; gap: var(--s-2); }
-  .tags li { padding: 0.375rem 0.75rem; border: 1px solid var(--rule); border-radius: 6px; font-size: 0.875rem; }
+  .tags li { padding: 0.375rem 0.75rem; border: 1px solid var(--rule); border-radius: 6px; font-size: var(--t-ui); }
   @media (max-width: 899px) {
     .bio, .two { grid-template-columns: 1fr; }
-    .cv li { grid-template-columns: 1fr; gap: var(--s-1); }
+    .cv > li { grid-template-columns: 1fr; gap: var(--s-1); }
   }
 </style>
