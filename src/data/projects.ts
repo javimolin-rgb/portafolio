@@ -419,6 +419,53 @@ const catalogo: Project[] = [
         ],
       },
       {
+        kind: 'stack',
+        heading: 'El día del evento',
+        pieces: [
+          p('dia-del-nino/ddn_ev_escenario', 'El escenario con la tienda llena', 'Domingo 3 de agosto de 2025', {
+            alt: 'El escenario del evento con el público sentado en el suelo y globos rosados, amarillos y morados, dentro de la tienda.',
+          }),
+          p('dia-del-nino/ddn_ev_alto', 'Vista desde arriba', 'Durante un show', {
+            alt: 'Vista desde el piso superior: familias sentadas en el piso de colores frente al escenario, rodeadas de globos.',
+          }),
+        ],
+        note: 'El recorrido completo, con la tienda abierta y funcionando.',
+      },
+      {
+        kind: 'row',
+        heading: 'El evento en marcha',
+        size: 'l',
+        surface: 'ground',
+        pieces: [
+          p('dia-del-nino/ddn_ev_arco', 'La entrada por el arco', 'Video, 12 s, sin sonido', {
+            video: 'ddn-arco',
+            alt: 'Video de la entrada al evento: el arco de franjas de colores y, al pasarlo, el pasillo de piso a rayas que cruza la tienda.',
+          }),
+          p('dia-del-nino/ddn_ev_bluey', 'El show de Bluey', 'Escenario', {
+            alt: 'El personaje de Bluey en el escenario, saludando, con la columna de "¡feliz día niños!" al fondo.',
+          }),
+          p('dia-del-nino/ddn_ev_personajes', 'Personajes en el escenario', 'Video, 9 s, sin sonido', {
+            video: 'ddn-personajes',
+            alt: 'Video de los personajes del evento esperando su turno junto al escenario.',
+          }),
+          p('dia-del-nino/ddn_ev_oso', 'La pieza central', 'Oso, onda y arcos', {
+            alt: 'El oso gigante sobre una tarima, entre el arco de lunares, la onda rosada y la columna de franjas.',
+          }),
+        ],
+        note: 'La gráfica en uso: el arco abre el pasillo de franjas, y las formas del sistema sostienen el escenario y la zona central.',
+      },
+      {
+        kind: 'pair',
+        heading: 'Zonas con familias',
+        a: p('dia-del-nino/ddn_ev_zona1', 'Mesas y rincón creativo', 'En uso', {
+          alt: 'La zona de mesas y el rincón creativo llenos de familias, con las columnas de franjas y los arcos de la paleta.',
+        }),
+        b: p('dia-del-nino/ddn_ev_zona2', 'Pintacaritas', 'En uso', {
+          alt: 'La fila del pintacaritas junto al módulo rosado con el letrero del servicio.',
+        }),
+        text: 'Las zonas que estaban vacías en el montaje, el domingo del evento.',
+      },
+      {
         kind: 'row',
         heading: 'Originales de gran formato',
         surface: 'dark',
@@ -455,7 +502,7 @@ const catalogo: Project[] = [
         ],
       },
     ],
-    credits: ['Fotos de montaje: MacroMKT.'],
+    credits: ['Fotos de montaje: MacroMKT.', 'Fotos y videos del evento: registro del equipo de Marketing de Ripley.'],
   },
 
   /* ------------------------------------------------------------------ */
