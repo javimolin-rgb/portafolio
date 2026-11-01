@@ -19,7 +19,7 @@ Actualizado: 20 de octubre de 2026. Corresponde al sitio publicado en https://ja
 - **Antes de cambiar algo,** explica en una o dos frases qué vas a hacer. Si vas a reemplazar o borrar archivos existentes, avísale antes y espera su respuesta.
 - **Si falta un dato,** pregúntalo; no lo rellenes. Eso incluye fechas, roles, nombres de personas y resultados.
 - **Antes de instalar** dependencias nuevas, cambiar configuración importante o ejecutar código externo, pide permiso.
-- **Ramas y publicación:** trabaja en una rama y abre un PR hacia `main`, como en el PR #1. El merge a `main` publica solo, con GitHub Actions.
+- **Ramas y publicación:** trabaja en una rama y abre un PR hacia `main`, como en el PR #1. El merge a `main` publica solo, con GitHub Actions. **Javi autorizó hacer el merge sin esperarla** (1 de noviembre de 2026): revisa el build y las capturas, mergea y avísale qué quedó publicado. Si algo te deja dudando, pregúntale en vez de mergear.
 - **Al terminar,** cuéntale en pocas líneas qué cambió y muéstrale capturas.
 
 ---
@@ -258,7 +258,7 @@ Para agregar un **video**, pon `video: 'nombre'` en la pieza y el archivo en `pu
 
 1. `npm run build` sin errores.
 2. Capturas a 1440 × 900 y 390 × 844 de cada página tocada. Revisa que no haya scroll horizontal (`scrollWidth - innerWidth = 0`).
-3. Muéstrale las capturas a Javi y espera su visto bueno antes del merge.
+3. Muéstrale las capturas a Javi. El merge lo haces tú, sin esperar respuesta (ver la sección 0).
 
 ---
 
