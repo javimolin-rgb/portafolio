@@ -1,0 +1,57 @@
+---
+/* Portada de una categoría: una composición de piezas suyas con el nombre de la
+   categoría en Newsreader y, debajo, cuántos proyectos y de qué años.
+   Es un control: filtra la grilla, o lleva al grupo cuando la categoría es un cliente. */
+import Composicion from './Composicion.astro';
+import type { Portada } from '../data/composiciones';
+
+interface Props { portada: Portada; n: number }
+const { portada: c, n } = Astro.props;
+const pie = `${n} ${n === 1 ? 'proyecto' : 'proyectos'} · ${c.anos}`;
+const etiqueta = c.filtro ? `Filtrar por ${c.titulo}: ${pie}` : `Ir a ${c.titulo}: ${pie}`;
+const vw = c.ancha ? 88 : 46;
+---
+<div class:list={['cover', { 'cover--ancha': c.ancha }]}>
+  <Composicion ratio={c.ratio} piezas={c.piezas} vw={vw}>
+    <div class="cover__texto">
+      <p class="cover__t">{c.titulo}</p>
+      <p class="cover__m">{pie}</p>
+    </div>
+  </Composicion>
+  {c.filtro ? (
+    <button type="button" class="cover__btn" data-cover-filtro={c.filtro}><span class="sr-only">{etiqueta}</span></button>
+  ) : (
+    <a class="cover__btn" href={`#${c.ancla}`}><span class="sr-only">{etiqueta}</span></a>
+  )}
+</div>
+
+<style>
+  .cover { position: relative; container-type: inline-size; }
+
+  /* El texto vive dentro de la placa, abajo a la izquierda, con el aire que dejan las piezas. */
+  .cover__texto { position: absolute; left: 7%; right: 7%; bottom: 8%; }
+  .cover__t {
+    font-family: var(--display); font-weight: var(--display-w); letter-spacing: -0.02em;
+    font-size: clamp(1.25rem, 7.5cqw, 4rem); line-height: 1; font-synthesis: none;
+  }
+  .cover__m { margin-top: 0.5em; font-size: clamp(0.625rem, 1.9cqw, var(--t-small)); line-height: 1.3; color: var(--fg-2); }
+  .cover--ancha .cover__t { font-size: clamp(1.25rem, 4.6cqw, 4rem); }
+  .cover--ancha .cover__m { font-size: clamp(0.625rem, 1.15cqw, var(--t-small)); }
+
+  /* El control cubre la placa entera: toda la portada es el objetivo. */
+  .cover__btn { position: absolute; inset: 0; display: block; width: 100%; text-decoration: none; }
+  .cover__btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  @media (hover: hover) and (pointer: fine) {
+    .cover:hover .cover__t { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.12em; }
+  }
+
+  /* En una columna la placa se hace más alta: las piezas mantienen su ancho en %,
+     así que el alto extra es aire y le deja sitio al título. El !important es para
+     ganarle al --comp-r que Composicion escribe en el style. */
+  @media (max-width: 799px) {
+    .cover :global(.comp) { --comp-r: 1.15 !important; }
+    .cover--ancha :global(.comp) { --comp-r: 1.35 !important; }
+    .cover--ancha .cover__t { font-size: clamp(1.25rem, 7.5cqw, 4rem); }
+    .cover--ancha .cover__m { font-size: clamp(0.625rem, 1.9cqw, var(--t-small)); }
+  }
+</style>

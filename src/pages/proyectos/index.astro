@@ -1,7 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { byGrupo, grupos } from '../../data/projects';
+import CategoryCover from '../../components/CategoryCover.astro';
+import { byGrupo, grupos, projects } from '../../data/projects';
+import { portadas } from '../../data/composiciones';
 
 /* Filtros por tipo de trabajo, derivados del tipo de cada proyecto. */
 const groups: Record<string, string[]> = {
@@ -28,6 +30,12 @@ const filters = [
 
 /* Los dos cuerpos de trabajo, Ripley primero. */
 const secciones = grupos.map((g) => ({ ...g, items: byGrupo(g.id) }));
+
+/* Cuántos proyectos hay detrás de cada portada, para su pie. */
+const cuantos = (filtro: string | null, ancla?: string) =>
+  filtro
+    ? projects.filter((p) => (groups[p.category] ?? []).includes(filtro)).length
+    : byGrupo(ancla as 'ripley' | 'freelance').length;
 ---
 <Base
   title="Proyectos — Javi Molin"
@@ -38,6 +46,16 @@ const secciones = grupos.map((g) => ({ ...g, items: byGrupo(g.id) }));
     <h1 class="page-head__title display">Proyectos</h1>
     <p class="page-head__lead lead">Doce proyectos de 2025 y 2026, agrupados por cliente. Elige un tipo de trabajo o abre cualquier proyecto para ver el proceso, los formatos y las decisiones.</p>
   </header>
+
+  <section class="sec portadas" aria-labelledby="por-tipo">
+    <h2 id="por-tipo" class="sr-only">Por tipo de trabajo</h2>
+    <div class="portadas__grid">
+      {portadas.map((c) => (
+        <CategoryCover portada={c} n={cuantos(c.filtro, c.ancla)} />
+      ))}
+    </div>
+    <p class="portadas__cred small muted">Fotos de montaje: MacroMKT. El concepto gráfico de Toys&#34;R&#34;Us es de la agencia ODN; las fotos y renders de Neorigen son del cliente, y las de producto de Muralia, de los fabricantes.</p>
+  </section>
 
   <section class="sec work" aria-label="Proyectos">
     <div class="filters" role="group" aria-label="Filtrar proyectos" data-filters hidden>
@@ -67,7 +85,15 @@ const secciones = grupos.map((g) => ({ ...g, items: byGrupo(g.id) }));
 </Base>
 
 <style>
-  .work { padding-top: var(--s-7); }
+  .portadas { padding-top: var(--s-7); }
+  /* Eventos ocupa la fila entera: la asimetría es deliberada, y su lienzo de cinco
+     metros necesita el ancho. Las otras cuatro van de a dos. */
+  .portadas__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+  .portadas__grid > :global(.cover--ancha) { grid-column: 1 / -1; }
+
+  .portadas__cred { margin-top: var(--s-4); max-width: 80ch; }
+
+  .work { padding-top: var(--s-8); }
   .filters { display: flex; flex-wrap: wrap; gap: var(--s-2); }
   .filter {
     min-height: 40px; padding: 0 1rem; border-radius: 6px; border: 1px solid #cfcfca;
@@ -83,7 +109,10 @@ const secciones = grupos.map((g) => ({ ...g, items: byGrupo(g.id) }));
   .group__meta { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
   .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--gap); }
   .cards li[hidden] { display: none; }
-  @media (max-width: 799px) { .cards { grid-template-columns: 1fr; } }
+  @media (max-width: 799px) {
+    .cards { grid-template-columns: 1fr; }
+    .portadas__grid { grid-template-columns: 1fr; }
+  }
 </style>
 
 <script>
@@ -114,9 +143,19 @@ const secciones = grupos.map((g) => ({ ...g, items: byGrupo(g.id) }));
       if (count) count.textContent = plural(total);
     };
 
-    btns.forEach((b) => b.addEventListener('click', () => {
-      btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      apply(b.dataset.filter!);
-    }));
+    const marcar = (key: string) => {
+      btns.forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.filter === key)));
+      apply(key);
+    };
+
+    btns.forEach((b) => b.addEventListener('click', () => marcar(b.dataset.filter!)));
+
+    // Las portadas hacen lo mismo que los botones, y llevan la vista a la grilla.
+    document.querySelectorAll<HTMLElement>('[data-cover-filtro]').forEach((c) => {
+      c.addEventListener('click', () => {
+        marcar(c.dataset.coverFiltro!);
+        document.querySelector('[data-filters]')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      });
+    });
   }
 </script>

@@ -94,11 +94,24 @@ Fija a la izquierda, de alto completo, con el contenido centrado vertical y hori
 
 ### Páginas
 
-- **Inicio:** presentación (nombre, rol, acciones y ficha) → **Un año diseñando para Ripley** sobre la placa, con ficha, Día del Niño en grande y seis proyectos → **Freelance** con Muralia y Neorigen → Qué hago → Experiencia → "¿Conversamos?".
-- **Proyectos:** entradilla y filtros (Todos, Eventos, Campañas, Lanzamientos, Marca e identidad) sobre dos grupos por cliente: **Ripley** (`#ripley`) primero y **Freelance** (`#freelance`) después. Un filtro que deja un grupo vacío lo esconde entero, con su título.
+- **Inicio:** presentación a dos columnas, con el nombre, el rol, las acciones a la izquierda y una **composición de tres piezas** a la derecha, de modo que haya trabajo suyo en la primera pantalla; bajo ellas, la ficha como franja de cuatro columnas → **Un año diseñando para Ripley** sobre la placa, con ficha, Día del Niño en grande y seis proyectos → **Freelance** con Muralia y Neorigen → Qué hago → Experiencia → "¿Conversamos?".
+- **Proyectos:** entradilla → **cinco portadas de categoría** → filtros (Todos, Eventos, Campañas, Lanzamientos, Marca e identidad) → dos grupos por cliente: **Ripley** (`#ripley`) primero y **Freelance** (`#freelance`) después. Un filtro que deja un grupo vacío lo esconde entero, con su título.
 - **Caso:** "Todos los proyectos" → título → resumen y ficha → pieza principal → índice "En este proyecto" → bloques → créditos → Anterior / Todos los proyectos / Siguiente.
 - **Experiencia:** bio, botones, Trabajo (con los puntos del CV bajo Ripley) y Formación, más etiquetas de Áreas y Herramientas.
 - **Contacto:** tres tarjetas (Correo, LinkedIn, CV) y el teléfono. Es el único lugar del sitio con el teléfono.
+
+### Composiciones de piezas
+
+`Composicion.astro` cuelga piezas reales sobre una placa, como en una sala. Los datos están en `src/data/composiciones.ts`: de cada pieza se fija solo `x`, `y` y el ancho, los tres en porcentaje de la placa. **El alto sale de la proporción real de la imagen,** así que ninguna pieza se deforma ni se recorta, y las posiciones están calculadas para que no se toquen entre ellas ni con el texto.
+
+Se usa en dos lugares:
+
+- **La primera pantalla del inicio:** tres piezas de tres proyectos distintos. Antes el inicio abría con texto sobre blanco y no se veía una sola pieza suya hasta hacer scroll.
+- **Las cinco portadas de categoría** de Proyectos (`CategoryCover.astro`): Eventos, Campañas, Lanzamientos, Marca e identidad y Freelance. Cada una lleva de tres a cinco piezas de esa categoría, el nombre en Newsreader y, debajo, cuántos proyectos y de qué años. **Eventos ocupa la fila entera** en una placa 5:2; las otras cuatro van de a dos en 3:2. La asimetría es deliberada, y el lienzo de cinco metros de Ripley Beauty necesita ese ancho.
+
+Las portadas son controles: las cuatro de categoría marcan su filtro, igual que los botones, que se mantienen; la de Freelance lleva al grupo `#freelance`, porque el cliente no es un filtro. Las piezas dentro van como decorativas (`alt=""`) porque la portada entera ya tiene nombre accesible, y cada pieza aparece rotulada y con pie dentro de su caso.
+
+Lo que es propuesta se rotula dentro de la composición: Gamer Week lleva "Propuesta, no producida".
 
 ### Lámina de portada
 
@@ -195,6 +208,7 @@ Las bibliotecas gráficas viven en `src/data/biblioteca-<marca>.ts` y se registr
 - Dos familias, subconjunto latino, `font-display: swap`, precarga.
 - Imágenes AVIF/WebP responsivas; la primera pantalla sin lazy.
 - `title`, `description`, Open Graph y Twitter por página; `sitemap.xml`, `robots.txt`, favicon SVG, JSON-LD `Person` con el nombre completo (María Javiera Molin Aguad).
+- `public/og.jpg` (1200 × 630) es lo primero que se ve al compartir el sitio en LinkedIn: su nombre en Newsreader y seis piezas reales de seis proyectos sobre la placa. Se genera fotografiando una página temporal con el componente `Composicion`, no a mano.
 
 ## 15. Evitar
 
