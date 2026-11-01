@@ -1,0 +1,60 @@
+---
+/* Una placa con piezas reales colgadas, cada una completa y en su proporción.
+   El alto de cada pieza sale de la imagen, no de un recorte: solo se fija el ancho.
+   Las piezas van como decorativas (alt="") porque la composición entera ya lleva
+   su nombre accesible; cada pieza aparece rotulada y con pie dentro de su caso. */
+import { Picture } from 'astro:assets';
+import type { PiezaComp } from '../data/composiciones';
+import { asset } from '../lib/assets';
+
+interface Props {
+  ratio: number;
+  piezas: PiezaComp[];
+  /** Ancho aproximado de la placa en la ventana, para elegir el tamaño de imagen. */
+  vw?: number;
+  class?: string;
+}
+const { ratio, piezas, vw = 50, class: cls = '' } = Astro.props;
+
+/* Se resuelve acá y no en la plantilla: dentro de {} el compilador lee un `<=` como etiqueta. */
+const items = piezas.map((p) => {
+  const img = asset(p.ref);
+  const anchos = [240, 480, 960].filter((w) => w <= img.width);
+  return {
+    ...p,
+    img,
+    widths: anchos.length ? anchos : [img.width],
+    sizes: `${Math.max(8, Math.round((p.w * vw) / 100))}vw`,
+  };
+});
+---
+<div class:list={['comp', cls]} style={`--comp-r:${ratio}`}>
+  {items.map((p) => (
+    <div class="comp__pz" style={`left:${p.x}%;top:${p.y}%;width:${p.w}%`}>
+      <Picture
+        src={p.img}
+        alt=""
+        widths={p.widths}
+        sizes={p.sizes}
+        formats={['avif']}
+        fallbackFormat="webp"
+        loading="lazy"
+        decoding="async"
+      />
+      {p.nota && <span class="comp__nota">{p.nota}</span>}
+    </div>
+  ))}
+  <slot />
+</div>
+
+<style>
+  .comp { position: relative; aspect-ratio: var(--comp-r); background: var(--plate); }
+  .comp__pz { position: absolute; }
+  /* Mismo filete interior casi invisible que el resto del sitio: separa las piezas
+     claras de la placa sin enmarcarlas. */
+  .comp__pz :global(img) { width: 100%; height: auto; box-shadow: inset 0 0 0 1px rgb(28 28 26 / 0.07); }
+  .comp__nota {
+    display: block; margin-top: 0.4em;
+    font-size: clamp(0.5rem, 0.9cqw, var(--t-mini)); line-height: 1.2; color: var(--fg-2);
+  }
+</style>

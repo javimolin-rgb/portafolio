@@ -2,11 +2,45 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { projects } from '../data/projects';
+import Figure from '../components/Figure.astro';
+import Composicion from '../components/Composicion.astro';
+import { byGrupo, projects, type Piece } from '../data/projects';
+import { heroComposicion } from '../data/composiciones';
 import { experiencia } from '../data/perfil';
 import { url } from '../lib/assets';
 
-const destacados = ['muralia', 'neorigen', 'dia-del-nino', 'campeones-sin-limites'].map((s) => projects.find((p) => p.slug === s)!);
+const find = (slug: string) => projects.find((p) => p.slug === slug)!;
+
+/* Ripley es su experiencia más fuerte: abre el inicio con sección propia. */
+const ripley = byGrupo('ripley');
+const ripleyDestacados = ['campeones-sin-limites', 'toys-r-us', 'ripley-beauty', 'ventas-privadas', 'new-romantic', 'fiestas-patrias'].map(find);
+const freelance = byGrupo('freelance');
+
+const fichaRipley = [
+  { k: 'Cargo', v: 'Diseñadora de Marketing' },
+  { k: 'Año', v: '2025' },
+  { k: 'Mercados', v: 'Chile y Perú' },
+  { k: 'Hitos', v: 'Día del Niño, Ripley Beauty, Fiestas Patrias, Navidad, CyberDay y Días R' },
+] as const;
+
+/* Día del Niño, su evento más potente: dos fotos del montaje en Costanera Center. */
+const ddn = find('dia-del-nino');
+const ddnFotos = {
+  arco: {
+    ref: 'dia-del-nino/ddn_f1346',
+    name: 'Arco de entrada y pasillo de franjas',
+    format: 'Ripley Costanera Center, 3 de agosto de 2025',
+    focus: '50% 42%',
+    alt: 'Arco de entrada del Día del Niño con franjas rosadas, naranjas y amarillas, seguido por un pasillo de piso a rayas dentro de la tienda.',
+  },
+  cubos: {
+    ref: 'dia-del-nino/ddn_f1354',
+    name: 'Torre de cubos instalada',
+    format: 'Foto de montaje',
+    focus: '50% 55%',
+    alt: 'Torre de cubos de colores montada sobre el piso de ondas, dentro de la tienda.',
+  },
+} satisfies Record<string, Piece>;
 
 const ficha = [
   { k: 'Foco', v: 'Branding, dirección de arte y campañas' },
@@ -26,14 +60,14 @@ const servicios = [
 ---
 <Base
   title="Javi Molin — Diseñadora Integral UC"
-  description="Portafolio de María Javiera Molin, Diseñadora Integral UC. Branding, dirección de arte, campañas y eventos que funcionan en todos los formatos."
+  description="Portafolio de María Javiera Molin Aguad, Diseñadora Integral UC. Branding, dirección de arte, campañas y eventos que funcionan en todos los formatos."
   current="inicio"
 >
   <section class="intro">
-    <p class="intro__kicker small muted">Portafolio 2025 — 2026</p>
-    <h1 class="intro__name display">María Javiera Molin</h1>
     <div class="intro__grid">
       <div class="intro__text">
+        <p class="intro__kicker small muted">Portafolio 2025 — 2026</p>
+        <h1 class="intro__name display">María Javiera Molin Aguad</h1>
         <p class="intro__role">Diseñadora Integral UC, branding y campañas</p>
         <p class="intro__lead lead">Diseño campañas, eventos y piezas de tienda para marcas en Chile y Perú, pensadas para funcionar igual en un pendón de dos metros que en un mensaje de WhatsApp. Busco un rol in-house y tomo proyectos freelance.</p>
         <div class="actions">
@@ -41,12 +75,61 @@ const servicios = [
           <a class="btn btn--ghost" href={url('cv/CV-Javi-Molin.pdf')} download><Icon name="download" size={18} />Descargar CV</a>
         </div>
       </div>
-      <dl class="intro__ficha">
-        {ficha.map((f) => (
-          <div><dt>{f.k}</dt><dd>{f.v}</dd></div>
-        ))}
-      </dl>
+      {/* Tres piezas reales en la primera pantalla: el trabajo antes que la descripción. */}
+      <Composicion ratio={heroComposicion.ratio} piezas={heroComposicion.piezas} vw={34} class="intro__comp" />
     </div>
+    <dl class="intro__ficha">
+      {ficha.map((f) => (
+        <div><dt>{f.k}</dt><dd>{f.v}</dd></div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="ripley" aria-labelledby="ripley">
+    <div class="ripley__in">
+      <div class="sec__head">
+        <h2 id="ripley" class="h2">Un año diseñando para Ripley</h2>
+        <a class="btn btn--ghost" href={url(`proyectos/#ripley`)}>Ver los {ripley.length} proyectos de Ripley</a>
+      </div>
+      <div class="ripley__grid">
+        <p class="lead ripley__lead">Diseñé, planifiqué y ejecuté campañas digitales y offline en Chile y Perú, en hitos institucionales y comerciales. Hice piezas para eventos corporativos y promocionales, material impreso, y adapté cada contenido a redes, e-commerce y tiendas, cuidando la consistencia visual en todos los puntos de contacto.</p>
+        <dl class="ripley__ficha">
+          {fichaRipley.map((f) => (
+            <div><dt>{f.k}</dt><dd>{f.v}</dd></div>
+          ))}
+        </dl>
+      </div>
+
+      <div class="ddn">
+        <div class="ddn__media">
+          <Figure piece={ddnFotos.arco} fit="cover" sizes="(min-width: 1000px) 55vw, 100vw" caption={false} class="ddn__big" style="--r:1.5" />
+          <Figure piece={ddnFotos.cubos} fit="cover" sizes="(min-width: 1000px) 28vw, 100vw" caption={false} class="ddn__small" style="--r:0.75" />
+        </div>
+        <div class="ddn__text">
+          <p class="small muted">{ddn.category} · {ddn.client}</p>
+          <h3 class="ddn__title display">{ddn.title}</h3>
+          <p class="ddn__sum">{ddn.summary}</p>
+          <div class="actions">
+            <a class="btn" href={url(`trabajo/${ddn.slug}/`)}>Ver el proyecto</a>
+          </div>
+          <p class="small muted ddn__credit">Fotos de montaje: MacroMKT.</p>
+        </div>
+      </div>
+
+      <ul class="cards cards--3">
+        {ripleyDestacados.map((p) => <li><ProjectCard project={p} /></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="freelance">
+    <div class="sec__head">
+      <h2 id="freelance" class="h2">Freelance: marca, redes y sitio web</h2>
+      <p class="sec__intro">Mis dos clientes actuales. En ambos trabajo la identidad completa, las redes y el sitio.</p>
+    </div>
+    <ul class="cards">
+      {freelance.map((p) => <li><ProjectCard project={p} /></li>)}
+    </ul>
   </section>
 
   <section class="sec" aria-labelledby="que-hago">
@@ -62,16 +145,6 @@ const servicios = [
           <p>{s.text}</p>
         </li>
       ))}
-    </ul>
-  </section>
-
-  <section class="sec" aria-labelledby="destacados">
-    <div class="sec__head">
-      <h2 id="destacados" class="h2">Proyectos destacados</h2>
-      <a class="btn btn--ghost" href={url('proyectos/')}>Ver los doce proyectos</a>
-    </div>
-    <ul class="cards">
-      {destacados.map((p) => <li><ProjectCard project={p} /></li>)}
     </ul>
   </section>
 
@@ -110,22 +183,49 @@ const servicios = [
 <style>
   .intro { padding: clamp(2.5rem, 8vh, 6rem) var(--margin) 0; }
   .intro__kicker { letter-spacing: 0.01em; }
-  .intro__name { margin-top: var(--s-4); font-size: clamp(2.75rem, 1.2rem + 4.2vw, 5.25rem); line-height: 0.98; letter-spacing: -0.02em; max-width: 14ch; }
-  .intro__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-6) clamp(2rem, 5vw, 5rem); margin-top: clamp(2rem, 4vw, 3rem); align-items: start; }
-  .intro__role { font-weight: 500; }
+  .intro__name { margin-top: var(--s-3); font-size: var(--t-hero); line-height: 0.98; letter-spacing: -0.02em; }
+  .intro__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-6) clamp(2rem, 5vw, 4rem); align-items: start; }
+  .intro__role { margin-top: clamp(1.5rem, 3vw, 2.5rem); font-weight: 500; }
   .intro__lead { margin-top: var(--s-3); color: var(--fg-2); }
   .intro .actions { margin-top: var(--s-6); }
-  .intro__ficha { font-size: var(--t-small); border-top: 1px solid var(--rule); }
-  .intro__ficha div { display: grid; grid-template-columns: 4.5rem 1fr; gap: var(--s-3); padding-block: var(--s-3); border-bottom: 1px solid var(--rule); }
+
+  /* La ficha pasa a ser una franja de cuatro columnas bajo la presentación. */
+  .intro__ficha {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap);
+    margin-top: clamp(2rem, 4vw, 3.5rem); padding-top: var(--s-4);
+    border-top: 1px solid var(--rule); font-size: var(--t-small);
+  }
+  .intro__ficha div { display: grid; gap: var(--s-1); align-content: start; }
   .intro__ficha dt { color: var(--fg-2); }
+  .intro__ficha dd { margin: 0; }
 
   .services { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6) var(--gap); }
   .service { padding-top: var(--s-5); border-top: 1px solid var(--rule); }
   .service__icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--plate); }
   .service .h3 { margin-top: var(--s-4); }
-  .service p { margin-top: var(--s-2); color: var(--fg-2); font-size: 0.9375rem; max-width: 36ch; }
+  .service p { margin-top: var(--s-2); color: var(--fg-2); font-size: var(--t-ui); max-width: 36ch; }
 
   .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--gap); }
+  .cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6) var(--gap); }
+
+  /* Ripley: la única sección del inicio sobre la placa. El color lo ponen las piezas. */
+  .ripley { margin-top: var(--section); background: var(--plate); }
+  .ripley__in { padding: clamp(2.5rem, 5vw, 4.5rem) var(--margin); }
+  .ripley__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-6) clamp(2rem, 5vw, 5rem); align-items: start; }
+  .ripley__lead { color: var(--fg); max-width: 54ch; }
+  .ripley__ficha { font-size: var(--t-small); border-top: 1px solid #dededa; }
+  .ripley__ficha div { display: grid; grid-template-columns: 5.5rem 1fr; gap: var(--s-3); padding-block: var(--s-3); border-bottom: 1px solid #dededa; }
+  .ripley__ficha dt { color: var(--fg-2); }
+
+  /* Día del Niño, su evento más potente: díptico de montaje y el texto al lado. */
+  .ddn { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-6) clamp(2rem, 4vw, 3.5rem); align-items: center; margin-top: clamp(2.5rem, 5vw, 4rem); }
+  .ddn__media { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--s-3); }
+  .ddn__title { font-size: var(--t-h2); margin-top: var(--s-2); }
+  .ddn__sum { margin-top: var(--s-3); color: var(--fg-2); max-width: 44ch; }
+  .ddn .actions { margin-top: var(--s-5); }
+  .ddn__credit { margin-top: var(--s-4); }
+
+  .ripley .cards--3 { margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: var(--s-6); border-top: 1px solid #dededa; }
 
   .timeline { border-top: 1px solid var(--rule); }
   .timeline li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: var(--gap); padding-block: var(--s-4); border-bottom: 1px solid var(--rule); }
@@ -137,12 +237,22 @@ const servicios = [
 
   @media (max-width: 1199px) {
     .services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ddn { grid-template-columns: 1fr; align-items: start; }
   }
   @media (max-width: 899px) {
-    .intro__grid { grid-template-columns: 1fr; }
+    .intro__grid, .ripley__grid { grid-template-columns: 1fr; }
+    .intro__ficha { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4) var(--gap); }
+    .cards--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* En una columna la composición iría enorme: se limita y se alinea a la izquierda. */
+    .intro__comp { max-width: 22rem; }
   }
   @media (max-width: 799px) {
-    .services, .cards { grid-template-columns: 1fr; }
+    .services, .cards, .cards--3 { grid-template-columns: 1fr; }
     .timeline li { grid-template-columns: 1fr; gap: 0; }
+    /* En una columna el díptico se parte. La segunda foto es vertical y a ancho
+       completo se comería la pantalla, así que ahí sí se recorta a apaisada.
+       El !important es para ganarle al --r que Figure escribe en el style. */
+    .ddn__media { grid-template-columns: 1fr; }
+    .ddn__media :global(.ddn__small) { --r: 1.33 !important; }
   }
 </style>
